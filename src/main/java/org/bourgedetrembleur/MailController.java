@@ -56,7 +56,7 @@ public class MailController implements Initializable
     @FXML
     TextField paramEmailTextField;
     @FXML
-    TextField paramPasswordTextField;
+    PasswordField paramPasswordTextField;
 
 
     @Override
@@ -146,7 +146,9 @@ public class MailController implements Initializable
                     mailObjetLabel.getText(),
                     mailMessageLabel.getText());
             App.getSendEmailService().reset();
+            System.out.println("Service reset");
             App.getSendEmailService().start();
+            System.out.println("Service lancé");
         }
         else
         {

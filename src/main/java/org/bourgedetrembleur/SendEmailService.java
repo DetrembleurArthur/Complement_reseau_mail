@@ -14,7 +14,7 @@ public class SendEmailService extends Service<Void>
 
     public SendEmailService(MailManager mailManager)
     {
-        setOnSucceeded(workerStateEvent -> JOptionPane.showMessageDialog(null, "Mail envoyé à " + email));
+        //setOnSucceeded(workerStateEvent -> JOptionPane.showMessageDialog(null, "Mail envoyé à " + email));
         setOnFailed(workerStateEvent -> JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail à " + email));
         this.mailManager = mailManager;
     }
@@ -27,7 +27,9 @@ public class SendEmailService extends Service<Void>
             @Override
             protected Void call() throws Exception
             {
+                 System.out.println("send");
                 mailManager.send(email, objet, message);
+                System.out.println("end send");
                 return null;
             }
         };

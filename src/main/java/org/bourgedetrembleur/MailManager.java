@@ -20,6 +20,7 @@ public class MailManager
         prop.put("mail.smtp.starttls.enable", getSettings().getTtls());
         prop.put("mail.smtp.host", getSettings().getSmtpServer());
         prop.put("mail.smtp.port", getSettings().getSmtpPort());
+        System.out.println("prop set");
 
         Session session = null;
         MimeMessage msg = null;
@@ -40,11 +41,14 @@ public class MailManager
             msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(getSettings().getEmail()));
         }
+        System.out.println("session set");
 
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(destination));
         msg.setSubject(object);
         msg.setText(message);
+        System.out.println("sending");
         Transport.send(msg);
+        System.out.println("done");
     }
 
     public Settings getSettings()

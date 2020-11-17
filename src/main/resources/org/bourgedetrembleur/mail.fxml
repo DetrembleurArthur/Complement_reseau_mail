@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -19,7 +20,7 @@
 
 <AnchorPane prefHeight="566.0" prefWidth="682.0" styleClass="main-panel" stylesheets="@mail.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
    <children>
-      <TabPane fx:id="mainTabPane" layoutX="78.0" layoutY="35.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="496.0" prefWidth="527.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="mainTabPane" layoutX="78.0" layoutY="35.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="496.0" prefWidth="527.0" styleClass="secondary-panel" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Envoi de mails">
                <content>
@@ -52,7 +53,7 @@
                               <Insets left="20.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox spacing="57.0">
+                        <HBox alignment="BOTTOM_LEFT" spacing="57.0">
                            <children>
                               <Label text="Objet: " />
                               <TextField fx:id="mailObjetLabel" prefHeight="25.0" prefWidth="251.0" />
@@ -163,7 +164,7 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                            <children>
                               <Label text="Serveur smtp: " />
                               <TextField fx:id="paramSmtpServerTextField" />
@@ -172,7 +173,7 @@
                               <Insets left="20.0" top="10.0" />
                            </padding>
                         </HBox>
-                        <HBox prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                            <children>
                               <Label text="Port: " />
                               <Spinner fx:id="paramPortSpinner" editable="true" />
@@ -181,7 +182,7 @@
                               <Insets left="20.0" top="10.0" />
                            </padding>
                         </HBox>
-                        <HBox prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                            <children>
                               <Label text="ttls: " />
                               <CheckBox fx:id="paramTtlsCheckBox" mnemonicParsing="false" />
@@ -190,7 +191,7 @@
                               <Insets left="20.0" top="10.0" />
                            </padding>
                         </HBox>
-                        <HBox prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                            <children>
                               <Label text="authentification: " />
                               <CheckBox fx:id="paramAuthenticationCheckBox" mnemonicParsing="false" />
@@ -199,7 +200,7 @@
                               <Insets left="20.0" top="10.0" />
                            </padding>
                         </HBox>
-                        <HBox prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                            <children>
                               <Label text="compte mail: " />
                               <TextField fx:id="paramEmailTextField" />
@@ -208,10 +209,10 @@
                               <Insets left="20.0" top="10.0" />
                            </padding>
                         </HBox>
-                        <HBox prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                            <children>
                               <Label text="mot de passe: " />
-                              <TextField fx:id="paramPasswordTextField" />
+                              <PasswordField fx:id="paramPasswordTextField" />
                            </children>
                            <padding>
                               <Insets left="20.0" top="10.0" />
