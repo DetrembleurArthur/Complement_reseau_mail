@@ -1,0 +1,142 @@
+
+.label, .button, .toggle-button, .text-field, .text-area
+{
+    -fx-text-fill: white;
+}
+
+.label-captor-stop
+{
+    -fx-text-fill: red;
+    -fx-font-size: 22;
+}
+
+.label-captor-start
+{
+    -fx-text-fill: lime;
+    -fx-font-size: 22;
+}
+
+.text-area .scroll-pane
+{
+    -fx-background-color: #336;
+}
+
+.text-area .content
+{
+    -fx-background-color: #447;
+}
+
+.text-area
+{
+    -fx-font-size: 14;
+    -fx-background-radius: 10px;
+}
+
+.combo-box .list-cell, .combo-box .combo-box-popup .list-view, .combo-box-base
+{
+    -fx-background-color: #225;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+}
+
+.tab-pane
+{
+    -fx-background-color: #447;
+    -fx-background-radius: 10px;
+}
+
+.tab-pane .tab-header-background
+{
+    -fx-background-color: #222;
+    -fx-background-radius: 10px 10px 0px 0px;
+}
+
+.tab-pane .tab
+{
+    -fx-background-color: #225;
+    -fx-background-radius: 10px 10px 0px 0px;
+}
+
+
+.tab-pane .tab-label
+{
+    -fx-text-fill: white;
+}
+
+.button, .toggle-button
+{
+    -fx-background-radius: 10;
+    -fx-background-color: #225;
+    -fx-border-radius:  10;
+    -fx-border-color: #222;
+    -fx-border-width: 3px;
+    -fx-background-insets: 1px;
+    -fx-cursor: hand;
+}
+
+.button:focused, .toggle-button:focused
+{
+    -fx-border-radius:  3;
+}
+
+.text-field
+{
+    -fx-background-radius: 5;
+    -fx-background-color: #226;
+    -fx-border-radius: 5;
+    -fx-border-color: #113;
+    -fx-border-width: 2px;
+    -fx-background-insets: 1px;
+}
+
+.toggle-button:selected
+{
+    -fx-background-color: #88f;
+    -fx-text-fill: black;
+    -fx-border-color: #335;
+}
+
+.button:hover, .toggle-button:hover, .text-field:hover
+{
+    -fx-background-color: #44a;
+}
+
+
+
+.label:hover
+{
+    -fx-underline: true;
+}
+
+.main-panel
+{
+    -fx-background-color: #335;
+}
+
+.titled-pane, .title
+{
+    -fx-background-color: #222;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+
+
+.main-titled-pane .content
+{
+    -fx-background-color: #447;
+    -fx-text-fill: white;
+    -fx-background-radius: 1 1 5 5;
+    -fx-border-color:transparent;
+}
+
+.sub-titled-pane .content
+{
+    -fx-background-color: #336;
+    -fx-background-radius: 1 1 5 5;
+}
+
+.progress-indicator
+{
+    -fx-progress-color: #23b;
+}

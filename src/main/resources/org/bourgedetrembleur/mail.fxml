@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="566.0" prefWidth="682.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
+<AnchorPane prefHeight="566.0" prefWidth="682.0" styleClass="main-panel" stylesheets="@mail.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
    <children>
       <TabPane fx:id="mainTabPane" layoutX="78.0" layoutY="35.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="496.0" prefWidth="527.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -28,9 +28,9 @@
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Label text="Destinataire : " />
-                              <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
+                              <VBox alignment="TOP_CENTER" prefHeight="105.0" prefWidth="151.0" spacing="15.0">
                                  <children>
-                                    <ComboBox fx:id="destinataireSelection" prefWidth="150.0" />
+                                    <ComboBox fx:id="destinataireSelection" prefHeight="25.0" prefWidth="181.0" />
                                     <TextField fx:id="nomDestinataire" />
                                     <TextField fx:id="emailDestinataire" />
                                  </children>
