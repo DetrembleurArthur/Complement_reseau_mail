@@ -74,6 +74,8 @@ public class MailController implements Initializable
         App.getMailManager().getSettings().load();
         App.getSendEmailService().setOnFailed(workerStateEvent -> {
             messageLabel.setText("Impossible d'envoyer l'email: " + workerStateEvent.getSource().getException().getMessage());
+            SoundManager.ERROR_SOUND.stop();
+            SoundManager.ERROR_SOUND.play();
             FadeTransition fadeTransition = new FadeTransition();
             fadeTransition.setNode(mailSendingProgressIndicator);
             fadeTransition.setDuration(Duration.millis(1000));
@@ -83,6 +85,8 @@ public class MailController implements Initializable
         });
         App.getSendEmailService().setOnSucceeded(workerStateEvent -> {
             messageLabel.setText("Mail envoyé");
+            SoundManager.MAIL_SEND_SOUND.stop();
+            SoundManager.MAIL_SEND_SOUND.play();
             FadeTransition fadeTransition = new FadeTransition();
             fadeTransition.setNode(mailSendingProgressIndicator);
             fadeTransition.setDuration(Duration.millis(3000));
@@ -150,6 +154,7 @@ public class MailController implements Initializable
         settings.setEmail(paramEmailTextField.getText());
         settings.setPassword(paramPasswordTextField.getText());
         settings.save();
+        messageLabel.setText("Paramètres sauvegardés");
     }
 
     @FXML
@@ -164,6 +169,7 @@ public class MailController implements Initializable
         else
         {
             carnetAddrTableView.getItems().add(new Receiver(name, email));
+            Receiver.save();
             nomDestinataire.clear();
             emailDestinataire.clear();
             messageLabel.setText(name + " a été ajouté au carnet d'adresses");
@@ -173,7 +179,6 @@ public class MailController implements Initializable
     @FXML
     public void quit_Action()
     {
-        Receiver.save();
         Platform.exit();
     }
 

@@ -42,9 +42,9 @@
                                     <Insets left="20.0" />
                                  </HBox.margin>
                               </VBox>
-                              <VBox prefHeight="105.0" prefWidth="214.0" spacing="20.0">
+                              <VBox prefHeight="117.0" prefWidth="375.0" spacing="20.0">
                                  <children>
-                                    <Label fx:id="emailLabel" text="email@email" />
+                                    <Label fx:id="emailLabel" prefHeight="17.0" prefWidth="376.0" text="email@email" />
                                     <Button fx:id="ajoutCarnetButton" mnemonicParsing="false" onAction="#addReceiver_Action" text="Ajouter au carnet d'adresse" />
                                  </children>
                                  <HBox.margin>
