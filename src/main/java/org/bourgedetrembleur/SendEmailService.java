@@ -3,7 +3,10 @@ package org.bourgedetrembleur;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
+import javax.mail.Message;
+import javax.mail.Session;
 import javax.swing.*;
+import java.util.Properties;
 
 public class SendEmailService extends Service<Void>
 {
@@ -14,8 +17,6 @@ public class SendEmailService extends Service<Void>
 
     public SendEmailService(MailManager mailManager)
     {
-        //setOnSucceeded(workerStateEvent -> JOptionPane.showMessageDialog(null, "Mail envoyé à " + email));
-        setOnFailed(workerStateEvent -> JOptionPane.showMessageDialog(null, "Impossible d'envoyer le mail à " + email));
         this.mailManager = mailManager;
     }
 
@@ -27,9 +28,15 @@ public class SendEmailService extends Service<Void>
             @Override
             protected Void call() throws Exception
             {
-                 System.out.println("send");
-                mailManager.send(email, objet, message);
-                System.out.println("end send");
+                updateProgress(0f, 100f);
+                Properties properties = mailManager.getProperties();
+                updateProgress(25f, 100f);
+                Session session = mailManager.getSession(properties);
+                updateProgress(50f, 100f);
+                Message msg = mailManager.generateMessage(session, email, objet, message);
+                updateProgress(75f, 100f);
+                mailManager.sendMessage(msg);
+                updateProgress(100f, 100f);
                 return null;
             }
         };

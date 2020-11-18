@@ -1,6 +1,9 @@
 package org.bourgedetrembleur;
 
+import javafx.concurrent.Task;
+
 import javax.mail.*;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
@@ -13,42 +16,49 @@ public class MailManager
     *
     * */
 
-    public void send(String destination, String object, String message) throws MessagingException
+    public Properties getProperties()
     {
         Properties prop = System.getProperties();
         prop.put("mail.smtp.auth", getSettings().getAuthentication());
         prop.put("mail.smtp.starttls.enable", getSettings().getTtls());
         prop.put("mail.smtp.host", getSettings().getSmtpServer());
         prop.put("mail.smtp.port", getSettings().getSmtpPort());
-        System.out.println("prop set");
+        return prop;
+    }
 
-        Session session = null;
-        MimeMessage msg = null;
-
+    public Session getSession(Properties prop)
+    {
+        Session session;
         if(getSettings().getAuthentication())
         {
             session = Session.getInstance(prop,
-            new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(getSettings().getEmail(), getSettings().getPassword());
-                }
-            });
-            msg = new MimeMessage(session);
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(getSettings().getEmail(), getSettings().getPassword());
+                        }
+                    });
         }
         else
         {
             session = Session.getDefaultInstance(prop);
-            msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(getSettings().getEmail()));
         }
-        System.out.println("session set");
+        return session;
+    }
 
+    public MimeMessage generateMessage(Session session, String destination, String object, String message) throws MessagingException
+    {
+        MimeMessage msg = new MimeMessage(session);
+        if(!getSettings().getAuthentication())
+            msg.setFrom(new InternetAddress(getSettings().getEmail()));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(destination));
         msg.setSubject(object);
         msg.setText(message);
-        System.out.println("sending");
-        Transport.send(msg);
-        System.out.println("done");
+        return msg;
+    }
+
+    public void sendMessage(Message message) throws MessagingException
+    {
+        Transport.send(message);
     }
 
     public Settings getSettings()

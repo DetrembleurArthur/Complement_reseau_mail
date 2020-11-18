@@ -6,6 +6,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -17,10 +19,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="566.0" prefWidth="682.0" styleClass="main-panel" stylesheets="@mail.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
+<AnchorPane prefHeight="643.0" prefWidth="922.0" styleClass="main-panel" stylesheets="@mail.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
    <children>
-      <TabPane fx:id="mainTabPane" layoutX="78.0" layoutY="35.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="496.0" prefWidth="527.0" styleClass="secondary-panel" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="mainTabPane" layoutX="27.0" layoutY="27.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="585.0" prefWidth="870.0" styleClass="secondary-panel" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="26.0">
         <tabs>
           <Tab text="Envoi de mails">
                <content>
@@ -29,11 +32,11 @@
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Label text="Destinataire : " />
-                              <VBox alignment="TOP_CENTER" prefHeight="105.0" prefWidth="151.0" spacing="15.0">
+                              <VBox alignment="TOP_CENTER" prefHeight="111.0" prefWidth="350.0" spacing="15.0">
                                  <children>
-                                    <ComboBox fx:id="destinataireSelection" prefHeight="25.0" prefWidth="181.0" />
-                                    <TextField fx:id="nomDestinataire" />
-                                    <TextField fx:id="emailDestinataire" />
+                                    <ComboBox fx:id="destinataireSelection" prefHeight="27.0" prefWidth="191.0" promptText="choisissez un contact" />
+                                    <TextField fx:id="nomDestinataire" prefWidth="300.0" promptText="Nom" />
+                                    <TextField fx:id="emailDestinataire" prefWidth="300.0" promptText="Email" />
                                  </children>
                                  <HBox.margin>
                                     <Insets left="20.0" />
@@ -50,22 +53,22 @@
                               </VBox>
                            </children>
                            <VBox.margin>
-                              <Insets left="20.0" top="10.0" />
+                              <Insets left="20.0" top="30.0" />
                            </VBox.margin>
                         </HBox>
                         <HBox alignment="BOTTOM_LEFT" spacing="57.0">
                            <children>
                               <Label text="Objet: " />
-                              <TextField fx:id="mailObjetLabel" prefHeight="25.0" prefWidth="251.0" />
+                              <TextField fx:id="mailObjetLabel" prefHeight="25.0" prefWidth="350.0" />
                            </children>
                            <VBox.margin>
                               <Insets left="20.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox prefHeight="139.0" prefWidth="605.0" spacing="38.0">
+                        <HBox prefHeight="201.0" prefWidth="850.0" spacing="38.0">
                            <children>
                               <Label text="Message: " />
-                              <TextArea fx:id="mailMessageLabel" prefHeight="98.0" prefWidth="253.0" />
+                              <TextArea fx:id="mailMessageLabel" prefHeight="186.0" prefWidth="684.0" />
                            </children>
                            <padding>
                               <Insets top="10.0" />
@@ -74,7 +77,7 @@
                               <Insets left="20.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="48.0" prefWidth="850.0" spacing="50.0">
                            <children>
                               <Button mnemonicParsing="false" text="Attacher pièces" />
                               <ComboBox prefWidth="150.0" />
@@ -86,16 +89,17 @@
                               <Insets left="20.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox prefHeight="100.0" spacing="50.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="50.0">
                            <children>
                               <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendEmail_Action" text="Envoyer" />
                               <Button mnemonicParsing="false" text="Annuler" />
+                              <ProgressIndicator fx:id="mailSendingProgressIndicator" opacity="0.0" progress="0.0" />
                            </children>
                            <padding>
                               <Insets top="10.0" />
                            </padding>
                            <VBox.margin>
-                              <Insets left="100.0" top="20.0" />
+                              <Insets top="20.0" />
                            </VBox.margin>
                         </HBox>
                      </children>
@@ -105,18 +109,18 @@
           <Tab text="Réception de mails" />
             <Tab text="Carnet d'adresses">
                <content>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="secondary-panel">
                      <children>
-                        <TableView fx:id="carnetAddrTableView" editable="true" prefHeight="358.0" prefWidth="527.0">
+                        <TableView fx:id="carnetAddrTableView" editable="true" prefHeight="420.0" prefWidth="870.0">
                           <columns>
-                            <TableColumn prefWidth="220.0" text="Nom" />
-                            <TableColumn prefWidth="300.0" text="email" />
+                            <TableColumn prefWidth="300.0" text="Nom" />
+                            <TableColumn editable="false" prefWidth="530.0" text="email" />
                           </columns>
                            <padding>
                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                            </padding>
                         </TableView>
-                        <HBox prefHeight="100.0" prefWidth="200.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Button mnemonicParsing="false" text="Delete">
                                  <HBox.margin>
@@ -164,60 +168,71 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
-                           <children>
-                              <Label text="Serveur smtp: " />
-                              <TextField fx:id="paramSmtpServerTextField" />
-                           </children>
-                           <padding>
-                              <Insets left="20.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
-                           <children>
-                              <Label text="Port: " />
-                              <Spinner fx:id="paramPortSpinner" editable="true" />
-                           </children>
-                           <padding>
-                              <Insets left="20.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
-                           <children>
-                              <Label text="ttls: " />
-                              <CheckBox fx:id="paramTtlsCheckBox" mnemonicParsing="false" />
-                           </children>
-                           <padding>
-                              <Insets left="20.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
-                           <children>
-                              <Label text="authentification: " />
-                              <CheckBox fx:id="paramAuthenticationCheckBox" mnemonicParsing="false" />
-                           </children>
-                           <padding>
-                              <Insets left="20.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
-                           <children>
-                              <Label text="compte mail: " />
-                              <TextField fx:id="paramEmailTextField" />
-                           </children>
-                           <padding>
-                              <Insets left="20.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
-                           <children>
-                              <Label text="mot de passe: " />
-                              <PasswordField fx:id="paramPasswordTextField" />
-                           </children>
-                           <padding>
-                              <Insets left="20.0" top="10.0" />
-                           </padding>
-                        </HBox>
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="310.0" prefWidth="870.0" styleClass="secondary-panel">
+                           <content>
+                              <VBox prefHeight="172.0" prefWidth="874.0" styleClass="secondary-panel">
+                                 <children>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefHeight="17.0" prefWidth="200.0" text="Serveur smtp: " />
+                                          <TextField fx:id="paramSmtpServerTextField" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="Port: " />
+                                          <Spinner fx:id="paramPortSpinner" editable="true" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="ttls: " />
+                                          <CheckBox fx:id="paramTtlsCheckBox" mnemonicParsing="false" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="authentification: " />
+                                          <CheckBox fx:id="paramAuthenticationCheckBox" mnemonicParsing="false" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="compte mail: " />
+                                          <TextField fx:id="paramEmailTextField" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="mot de passe: " />
+                                          <PasswordField fx:id="paramPasswordTextField" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                           <VBox.margin>
+                              <Insets top="30.0" />
+                           </VBox.margin>
+                        </ScrollPane>
                         <Button mnemonicParsing="false" onAction="#saveSettings_Action" text="Save" textAlignment="CENTER">
                            <VBox.margin>
                               <Insets left="50.0" top="60.0" />
@@ -229,6 +244,11 @@
             </Tab>
         </tabs>
       </TabPane>
-      <Button layoutX="614.0" layoutY="531.0" mnemonicParsing="false" onAction="#quit_Action" text="Quitter" />
+      <Button layoutX="831.0" layoutY="582.0" mnemonicParsing="false" onAction="#quit_Action" text="Quitter" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="27.0" layoutY="621.0" prefHeight="27.0" prefWidth="870.0" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

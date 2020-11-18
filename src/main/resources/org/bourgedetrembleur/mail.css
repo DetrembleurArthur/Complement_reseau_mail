@@ -3,8 +3,8 @@
 .combo-box, .combo-box .combo-box-popup .list-view,
 .combo-box .combo-box-popup .list-view .list-cell,
 .scroll-pane .content, .text-area, .scroll-pane .corner
-, .scroll-pane .scroll-bar:vertical
-, .scroll-pane .scroll-bar:horizontal
+, .scroll-bar:vertical
+, .scroll-bar:horizontal
 , .check-box:selected .box .mark
 , .table-view
 , .table-view .placeholder
@@ -13,9 +13,21 @@
 , .table-view .column-resize-line
 , .table-view .column-overlay
 , .table-row-cell
+, .tree-view
+, .tree-cell
 {
     -fx-background-color :rgb(32, 33, 36);
     -fx-border-color : rgb(32, 33, 36);
+}
+
+.table-row-cell:selected, .table-row-cell:hover
+{
+    -fx-background-color: rgb(138, 180, 248);
+}
+.table-row-cell:selected .text
+{
+    -fx-fill: rgb(138, 180, 248) ;
+
 }
 
 .button, .tab-pane .tab-header-area .control-buttons-tab,
@@ -62,18 +74,23 @@
     -fx-background-color: rgb(50, 50, 60);
 }
 
+
+
 .secondary-panel, .tab-pane .tab-header-area .headers-region,
 .tab-pane .tab-header-area .tab-header-background,
 .table-view
+, .scroll-pane
+, .scroll-pane .viewport
 {
     -fx-background-color :rgb(41, 42, 45);
 }
 
 .label, .text-field, .text-area, .combo-box .combo-box-popup .list-view .list-cell
-, .table-view .table-cell
+, .table-view .table-cell, .combo-box .list-cell
 {
     -fx-text-fill: white;
 }
+
 
 .text-field, .tab-pane .tab-header-area .tab
 {
@@ -91,4 +108,30 @@
 {
     -fx-background-color: rgba(138, 180, 248, 0.1);
     -fx-background-radius: 4px;
+}
+
+.table-row-cell .text
+{
+    -fx-fill: white ;
+
+}
+
+.progress-indicator
+{
+    -fx-progress-color: rgb(138, 180, 248);
+}
+
+.progress-indicator .indicator
+{
+    -fx-background-color :rgb(32, 33, 36);;
+}
+
+.progress-indicator .tick
+{
+    -fx-background-color :rgb(41, 42, 45);
+}
+
+.progress-indicator .percentage
+{
+    -fx-fill: white;
 }

@@ -1,10 +1,13 @@
 package org.bourgedetrembleur;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Duration;
 
 import javax.mail.MessagingException;
 import javax.swing.*;
@@ -15,6 +18,12 @@ public class MailController implements Initializable
 {
     @FXML
     TabPane mainTabPane;
+
+    @FXML
+    Label messageLabel;
+
+    @FXML
+    ProgressIndicator mailSendingProgressIndicator;
 
     @FXML
     ComboBox<Receiver> destinataireSelection;
@@ -63,6 +72,35 @@ public class MailController implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         App.getMailManager().getSettings().load();
+        App.getSendEmailService().setOnFailed(workerStateEvent -> {
+            messageLabel.setText("Impossible d'envoyer l'email: " + workerStateEvent.getSource().getException().getMessage());
+            FadeTransition fadeTransition = new FadeTransition();
+            fadeTransition.setNode(mailSendingProgressIndicator);
+            fadeTransition.setDuration(Duration.millis(1000));
+            fadeTransition.setFromValue(1f);
+            fadeTransition.setToValue(0f);
+            fadeTransition.playFromStart();
+        });
+        App.getSendEmailService().setOnSucceeded(workerStateEvent -> {
+            messageLabel.setText("Mail envoyé");
+            FadeTransition fadeTransition = new FadeTransition();
+            fadeTransition.setNode(mailSendingProgressIndicator);
+            fadeTransition.setDuration(Duration.millis(3000));
+            fadeTransition.setFromValue(1f);
+            fadeTransition.setToValue(0f);
+            fadeTransition.playFromStart();
+        });
+        App.getSendEmailService().setOnRunning(workerStateEvent -> {
+            messageLabel.setText("Envoi du mail");
+            FadeTransition fadeTransition = new FadeTransition();
+            fadeTransition.setNode(mailSendingProgressIndicator);
+            fadeTransition.setDuration(Duration.millis(1000));
+            fadeTransition.setFromValue(0f);
+            fadeTransition.setToValue(1f);
+            fadeTransition.playFromStart();
+        });
+        mailSendingProgressIndicator.progressProperty().bind(App.getSendEmailService().progressProperty());
+
         initSettingsControls();
         initCarnetAddrControls();
     }
@@ -70,10 +108,10 @@ public class MailController implements Initializable
     public void initCarnetAddrControls()
     {
         TableColumn<Receiver, String> nameColumn = new TableColumn<>("Nom");
-        nameColumn.setMinWidth(220);
+        nameColumn.setMinWidth(300);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Receiver, String> emailColumn = new TableColumn<>("Email");
-        emailColumn.setMinWidth(300);
+        emailColumn.setMinWidth(530);
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         carnetAddrTableView.getColumns().clear();
@@ -121,11 +159,14 @@ public class MailController implements Initializable
         String email = emailDestinataire.getText();
         if(name.isBlank() || email.isBlank())
         {
-            JOptionPane.showMessageDialog(null, "Les champs ne doivent pas être vides");
+            messageLabel.setText("Les champs doivent être remplis");
         }
         else
         {
             carnetAddrTableView.getItems().add(new Receiver(name, email));
+            nomDestinataire.clear();
+            emailDestinataire.clear();
+            messageLabel.setText(name + " a été ajouté au carnet d'adresses");
         }
     }
 
@@ -137,22 +178,27 @@ public class MailController implements Initializable
     }
 
     @FXML
-    public void sendEmail_Action() throws MessagingException
+    public void sendEmail_Action()
     {
         if(!App.getSendEmailService().isRunning())
         {
-            App.getSendEmailService().setInfos(
-                    emailLabel.getText(),
-                    mailObjetLabel.getText(),
-                    mailMessageLabel.getText());
-            App.getSendEmailService().reset();
-            System.out.println("Service reset");
-            App.getSendEmailService().start();
-            System.out.println("Service lancé");
+            if(emailLabel.getText().isBlank() || mailObjetLabel.getText().isBlank() || mailMessageLabel.getText().isBlank())
+            {
+                messageLabel.setText("Les champs doivent être remplis");
+            }
+            else
+            {
+                App.getSendEmailService().setInfos(
+                        emailLabel.getText(),
+                        mailObjetLabel.getText(),
+                        mailMessageLabel.getText());
+                App.getSendEmailService().reset();
+                App.getSendEmailService().start();
+            }
         }
         else
         {
-            JOptionPane.showMessageDialog(null, "Attendez que le mail précédent soit envoyé");
+            messageLabel.setText("Attendez que le mail précédent soit envoyé");
         }
     }
 }
