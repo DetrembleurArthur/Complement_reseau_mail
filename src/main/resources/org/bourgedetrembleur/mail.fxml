@@ -168,7 +168,7 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="310.0" prefWidth="870.0" styleClass="secondary-panel">
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="451.0" prefWidth="870.0" styleClass="secondary-panel">
                            <content>
                               <VBox prefHeight="172.0" prefWidth="874.0" styleClass="secondary-panel">
                                  <children>
@@ -221,6 +221,51 @@
                                        <children>
                                           <Label prefWidth="200.0" text="mot de passe: " />
                                           <PasswordField fx:id="paramPasswordTextField" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefHeight="17.0" prefWidth="200.0" text="Serveur pop3: " />
+                                          <TextField prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="30.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="Port: " />
+                                          <Spinner editable="true" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="Disable top:" />
+                                          <CheckBox mnemonicParsing="false" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="compte mail: " />
+                                          <TextField fx:id="paramEmailTextField1" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="mot de passe: " />
+                                          <PasswordField fx:id="paramPasswordTextField1" prefWidth="500.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
