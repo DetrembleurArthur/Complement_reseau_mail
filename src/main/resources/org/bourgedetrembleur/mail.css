@@ -20,10 +20,19 @@
     -fx-border-color : rgb(32, 33, 36);
 }
 
-.table-row-cell:selected, .table-row-cell:hover
+.table-row-cell:selected, .table-row-cell:hover, .slider .track, .slider .thumb
 {
     -fx-background-color: rgb(138, 180, 248);
 }
+
+
+
+.slider .thumb
+{
+    -fx-border-radius: 50%;
+    -fx-border-color: black;
+}
+
 .table-row-cell:selected .text
 {
     -fx-fill: rgb(138, 180, 248) ;
@@ -115,7 +124,6 @@
     -fx-fill: white ;
 
 }
-
 .progress-indicator
 {
     -fx-progress-color: rgb(138, 180, 248);

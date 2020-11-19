@@ -8,6 +8,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -168,7 +169,7 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="451.0" prefWidth="870.0" styleClass="secondary-panel">
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="454.0" prefWidth="870.0" styleClass="secondary-panel" vvalue="1.0">
                            <content>
                               <VBox prefHeight="172.0" prefWidth="874.0" styleClass="secondary-panel">
                                  <children>
@@ -266,6 +267,27 @@
                                        <children>
                                           <Label prefWidth="200.0" text="mot de passe: " />
                                           <PasswordField fx:id="paramPasswordTextField1" prefWidth="500.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="Enable sound effects:" />
+                                          <CheckBox fx:id="paramEnableSoundEffectCheckBox" mnemonicParsing="false" prefWidth="500.0" selected="true" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="Volume:" />
+                                          <Slider fx:id="paramVolumeSlider" blockIncrement="0.05" max="1.0" prefWidth="500.0" value="0.5" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />

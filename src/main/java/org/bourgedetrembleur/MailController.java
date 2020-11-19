@@ -1,7 +1,6 @@
 package org.bourgedetrembleur;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,8 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
 
-import javax.mail.MessagingException;
-import javax.swing.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -66,11 +63,25 @@ public class MailController implements Initializable
     TextField paramEmailTextField;
     @FXML
     PasswordField paramPasswordTextField;
+    @FXML
+    CheckBox paramEnableSoundEffectCheckBox;
+    @FXML
+    Slider paramVolumeSlider;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        SoundManager.MAIL_SEND_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
+        SoundManager.MAIL_RECV_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
+        SoundManager.ERROR_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
+
+        SoundManager.MAIL_SEND_SOUND.volumeProperty().bind(paramVolumeSlider.valueProperty());
+        SoundManager.MAIL_RECV_SOUND.volumeProperty().bind(paramVolumeSlider.valueProperty());
+        SoundManager.ERROR_SOUND.volumeProperty().bind(paramVolumeSlider.valueProperty());
+
+        paramVolumeSlider.disableProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
+
         App.getMailManager().getSettings().load();
         App.getSendEmailService().setOnFailed(workerStateEvent -> {
             messageLabel.setText("Impossible d'envoyer l'email: " + workerStateEvent.getSource().getException().getMessage());
@@ -141,6 +152,9 @@ public class MailController implements Initializable
         paramAuthenticationCheckBox.setSelected(App.getMailManager().getSettings().getAuthentication());
         paramEmailTextField.setText(App.getMailManager().getSettings().getEmail());
         paramPasswordTextField.setText(App.getMailManager().getSettings().getPassword());
+        paramEnableSoundEffectCheckBox.setSelected(App.getMailManager().getSettings().getEnableSoundEffect());
+        paramVolumeSlider.setValue(App.getMailManager().getSettings().getVolume());
+
     }
 
     @FXML
@@ -153,6 +167,8 @@ public class MailController implements Initializable
         settings.setAuthentication(paramAuthenticationCheckBox.isSelected());
         settings.setEmail(paramEmailTextField.getText());
         settings.setPassword(paramPasswordTextField.getText());
+        settings.setEnableSoundEffect(paramEnableSoundEffectCheckBox.isSelected());
+        settings.setVolume(paramVolumeSlider.getValue());
         settings.save();
         messageLabel.setText("Paramètres sauvegardés");
     }

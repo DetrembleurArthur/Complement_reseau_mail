@@ -26,6 +26,8 @@ public class Settings
                 setAuthentication(false);
                 setEmail("no email");
                 setPassword("no password");
+                setEnableSoundEffect(false);
+                setVolume(0.5f);
                 save();
                 JOptionPane.showMessageDialog(null, "Veuillez compléter vos paramètres");
 
@@ -77,6 +79,16 @@ public class Settings
         properties.setProperty("password", password);
     }
 
+    public void setEnableSoundEffect(boolean enable)
+    {
+        properties.setProperty("enableSoundEffect", String.valueOf(enable));
+    }
+
+    public void setVolume(double volume)
+    {
+        properties.setProperty("volume", String.valueOf(volume));
+    }
+
     public String getSmtpServer()
     {
         return properties.getProperty("smtp.server");
@@ -105,6 +117,16 @@ public class Settings
     public String getPassword()
     {
         return properties.getProperty("password");
+    }
+
+    public boolean getEnableSoundEffect()
+    {
+        return Boolean.parseBoolean(properties.getProperty("enableSoundEffect"));
+    }
+
+    public double getVolume()
+    {
+        return Double.parseDouble(properties.getProperty("volume"));
     }
 }
 
