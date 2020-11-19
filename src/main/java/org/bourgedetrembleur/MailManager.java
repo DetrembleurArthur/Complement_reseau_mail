@@ -3,7 +3,6 @@ package org.bourgedetrembleur;
 import javafx.concurrent.Task;
 
 import javax.mail.*;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
@@ -62,7 +61,7 @@ public class MailManager
     {
         if(attachedFiles != null)
         {
-
+            
         }
         return null;
     }

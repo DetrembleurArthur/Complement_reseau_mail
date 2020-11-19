@@ -189,11 +189,19 @@ public class MailController implements Initializable
         }
         else
         {
-            carnetAddrTableView.getItems().add(new Receiver(name, email));
-            Receiver.save();
-            nomDestinataire.clear();
-            emailDestinataire.clear();
-            messageLabel.setText(name + " a été ajouté au carnet d'adresses");
+            Receiver receiver = new Receiver(name, email);
+            if(!carnetAddrTableView.getItems().contains(receiver))
+            {
+                carnetAddrTableView.getItems().add(receiver);
+                Receiver.save();
+                nomDestinataire.clear();
+                emailDestinataire.clear();
+                messageLabel.setText(name + " a été ajouté au carnet d'adresses");
+            }
+            else
+            {
+                messageLabel.setText(name + " est déja présent dans le carnet d'adresses");
+            }
         }
     }
 

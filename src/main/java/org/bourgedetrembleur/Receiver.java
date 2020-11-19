@@ -22,8 +22,8 @@ public class Receiver implements Serializable
 
     public Receiver(String name, String email)
     {
-        this.name = name;
-        this.email = email;
+        this.name = name.toLowerCase();
+        this.email = email.toLowerCase();
     }
 
     public String getName()
@@ -33,7 +33,7 @@ public class Receiver implements Serializable
 
     public void setName(String name)
     {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public String getEmail()
@@ -43,7 +43,7 @@ public class Receiver implements Serializable
 
     public void setEmail(String email)
     {
-        this.email = email;
+        this.email = email.toLowerCase();
     }
 
     public static void load()
@@ -94,5 +94,13 @@ public class Receiver implements Serializable
     public String toString()
     {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if(other == null)
+            return false;
+        return name.equals(((Receiver) other).getName()) || email.equals(((Receiver) other).getEmail());
     }
 }
