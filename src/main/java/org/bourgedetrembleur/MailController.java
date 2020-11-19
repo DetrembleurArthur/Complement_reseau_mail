@@ -251,4 +251,10 @@ public class MailController implements Initializable
         if(file != null)
             attachedFilesComboBox.getItems().remove(file);
     }
+
+    @FXML
+    public void testSmtp_Action()
+    {
+        messageLabel.setText(Boolean.toString(App.getMailManager().testSmtpAccess()));
+    }
 }

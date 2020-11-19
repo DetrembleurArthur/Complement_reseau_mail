@@ -170,7 +170,7 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="454.0" prefWidth="870.0" styleClass="secondary-panel" vvalue="1.0">
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="454.0" prefWidth="870.0" styleClass="secondary-panel">
                            <content>
                               <VBox prefHeight="172.0" prefWidth="874.0" styleClass="secondary-panel">
                                  <children>
@@ -301,11 +301,15 @@
                               <Insets top="30.0" />
                            </VBox.margin>
                         </ScrollPane>
-                        <Button mnemonicParsing="false" onAction="#saveSettings_Action" text="Save" textAlignment="CENTER">
+                        <HBox spacing="60.0">
                            <VBox.margin>
                               <Insets left="50.0" top="60.0" />
                            </VBox.margin>
-                        </Button>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#saveSettings_Action" text="Save" textAlignment="CENTER" />
+                              <Button mnemonicParsing="false" onAction="#testSmtp_Action" text="Test smtp" textAlignment="CENTER" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </content>

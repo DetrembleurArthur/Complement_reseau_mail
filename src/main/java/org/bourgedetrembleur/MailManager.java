@@ -10,15 +10,13 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
-public class MailManager
-{
+public class MailManager {
     private final Settings settings = new Settings();
     /*
     *
     * */
 
-    public Properties getSmtpProperties()
-    {
+    public Properties getSmtpProperties() {
         Properties prop = System.getProperties();
         prop.put("mail.smtp.auth", getSettings().getAuthentication());
         prop.put("mail.smtp.starttls.enable", getSettings().getTtls());
@@ -27,23 +25,38 @@ public class MailManager
         return prop;
     }
 
-    public Session getSession(Properties prop)
-    {
-        Session session;
-        if(getSettings().getAuthentication())
-        {
-            session = Session.getInstance(prop,
-                    new javax.mail.Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(getSettings().getEmail(), getSettings().getPassword());
-                        }
-                    });
-        }
-        else
-        {
+    public Session getSession(Properties prop) {
+        Session session = null;
+        if (getSettings().getAuthentication()) {
+            session = Session.getInstance(prop, new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(getSettings().getEmail(), getSettings().getPassword());
+                }
+            });
+        } else {
             session = Session.getDefaultInstance(prop);
         }
         return session;
+    }
+
+    public boolean testSmtpAccess() {
+        Properties props = getSmtpProperties();
+        Session session = getSession(props);
+        
+        try {
+            Transport transport = session.getTransport("smtp");
+            transport.connect();
+            transport.close();
+            return true;
+        }
+        catch(AuthenticationFailedException e)
+        {
+            System.err.println("Auth");
+        }
+         catch (MessagingException e) {
+            System.err.println("Other");
+        }
+        return false;
     }
 
     public MimeMessage generateMessage(Session session, String destination, String object, String message) throws MessagingException
