@@ -14,6 +14,7 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static Stage stage;
 
     private static final MailManager mailManager = new MailManager();
     private static final SendEmailService sendEmailService = new SendEmailService(mailManager);
@@ -24,6 +25,7 @@ public class App extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+        App.stage = stage;
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -47,5 +49,15 @@ public class App extends Application {
     public static SendEmailService getSendEmailService()
     {
         return sendEmailService;
+    }
+
+    public static Scene getScene()
+    {
+        return scene;
+    }
+
+    public static Stage getStage()
+    {
+        return stage;
     }
 }

@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -45,6 +47,9 @@ public class MailController implements Initializable
 
     @FXML
     Button sendButton;
+
+    @FXML
+    ComboBox<File> attachedFilesComboBox;
 
     //Carnet d'adresses
     @FXML
@@ -221,5 +226,21 @@ public class MailController implements Initializable
         {
             messageLabel.setText("Attendez que le mail précédent soit envoyé");
         }
+    }
+
+    @FXML
+    public void addAttachedFile_Action()
+    {
+        FileChooser chooser = new FileChooser();
+        var files = chooser.showOpenMultipleDialog(App.getStage());
+        attachedFilesComboBox.getItems().addAll(files);
+    }
+
+    @FXML
+    public void removeAttachedFile_Action()
+    {
+        var file = attachedFilesComboBox.getSelectionModel().getSelectedItem();
+        if(file != null)
+            attachedFilesComboBox.getItems().remove(file);
     }
 }

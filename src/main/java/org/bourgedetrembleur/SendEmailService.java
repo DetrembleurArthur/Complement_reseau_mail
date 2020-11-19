@@ -5,7 +5,6 @@ import javafx.concurrent.Task;
 
 import javax.mail.Message;
 import javax.mail.Session;
-import javax.swing.*;
 import java.util.Properties;
 
 public class SendEmailService extends Service<Void>
@@ -29,7 +28,7 @@ public class SendEmailService extends Service<Void>
             protected Void call() throws Exception
             {
                 updateProgress(0f, 100f);
-                Properties properties = mailManager.getProperties();
+                Properties properties = mailManager.getSmtpProperties();
                 updateProgress(25f, 100f);
                 Session session = mailManager.getSession(properties);
                 updateProgress(50f, 100f);

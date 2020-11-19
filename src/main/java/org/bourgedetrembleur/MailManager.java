@@ -7,6 +7,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
+import java.io.File;
+import java.util.List;
 import java.util.Properties;
 
 public class MailManager
@@ -16,7 +18,7 @@ public class MailManager
     *
     * */
 
-    public Properties getProperties()
+    public Properties getSmtpProperties()
     {
         Properties prop = System.getProperties();
         prop.put("mail.smtp.auth", getSettings().getAuthentication());
@@ -54,6 +56,15 @@ public class MailManager
         msg.setSubject(object);
         msg.setText(message);
         return msg;
+    }
+
+    public Multipart generateMultipart(MimeMessage mimeMessage, List<File> attachedFiles)
+    {
+        if(attachedFiles != null)
+        {
+
+        }
+        return null;
     }
 
     public void sendMessage(Message message) throws MessagingException
