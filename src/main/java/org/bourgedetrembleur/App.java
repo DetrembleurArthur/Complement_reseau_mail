@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -26,6 +27,13 @@ public class App extends Application {
         stage.setResizable(false);
         stage.show();
         App.stage = stage;
+    }
+
+    @Override
+    public void stop() throws Exception
+    {
+        super.stop();
+        clearNotifications();
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -59,5 +67,40 @@ public class App extends Application {
     public static Stage getStage()
     {
         return stage;
+    }
+
+    public static void notification(String caption, String message, TrayIcon.MessageType type)
+    {
+        SystemTray tray = SystemTray.getSystemTray();
+
+        //If the icon is a file
+        Image image = Toolkit.getDefaultToolkit().createImage("java.png");
+        //Alternative (if the icon is on the classpath):
+        //Image image = Toolkit.getToolkit().createImage(getClass().getResource("java.png"));
+
+        TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
+        //Let the system resize the image if needed
+        trayIcon.setImageAutoSize(true);
+        //Set tooltip text for the tray icon
+        trayIcon.setToolTip("System tray icon demo");
+        try
+        {
+            tray.add(trayIcon);
+        } catch (AWTException e)
+        {
+            e.printStackTrace();
+        }
+
+        trayIcon.displayMessage(caption, message, type);
+    }
+
+    public static void clearNotifications()
+    {
+        System.err.println("clear notifications");
+        SystemTray tray = SystemTray.getSystemTray();
+        for(var icon : tray.getTrayIcons())
+        {
+            tray.remove(icon);
+        }
     }
 }

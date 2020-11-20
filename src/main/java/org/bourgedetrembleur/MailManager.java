@@ -39,7 +39,7 @@ public class MailManager {
         return session;
     }
 
-    public boolean testSmtpAccess() {
+    public int testSmtpAccess() {
         Properties props = getSmtpProperties();
         Session session = getSession(props);
         
@@ -47,16 +47,16 @@ public class MailManager {
             Transport transport = session.getTransport("smtp");
             transport.connect();
             transport.close();
-            return true;
+            return 1;
         }
         catch(AuthenticationFailedException e)
         {
-            System.err.println("Auth");
+            return 2;
         }
          catch (MessagingException e) {
             System.err.println("Other");
         }
-        return false;
+        return 3;
     }
 
     public MimeMessage generateMessage(Session session, String destination, String object, String message) throws MessagingException
