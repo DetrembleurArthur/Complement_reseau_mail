@@ -1,7 +1,6 @@
 package org.bourgedetrembleur;
 
 import javafx.animation.FadeTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -10,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -51,6 +51,12 @@ public class MailController implements Initializable
     TextArea mailMessageLabel;
 
     @FXML
+    HTMLEditor htmlMessageTextArea;
+
+    @FXML
+    Tab plainTextTab;
+
+    @FXML
     Button sendButton;
 
     @FXML
@@ -64,11 +70,11 @@ public class MailController implements Initializable
     @FXML
     TextField paramSmtpServerTextField;
     @FXML
-    Spinner<Integer> paramPortSpinner;
+    Spinner<Integer> paramSmtpPortSpinner;
     @FXML
-    CheckBox paramTtlsCheckBox;
+    CheckBox paramSmtpTtlsCheckBox;
     @FXML
-    CheckBox paramAuthenticationCheckBox;
+    CheckBox paramSmtpAuthenticationCheckBox;
     @FXML
     TextField paramEmailTextField;
     @FXML
@@ -78,25 +84,26 @@ public class MailController implements Initializable
     @FXML
     Slider paramVolumeSlider;
 
+    @FXML
+    CheckBox paramEnableNotificationsCheckBox;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+
         SoundManager.MAIL_SEND_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
         SoundManager.MAIL_RECV_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
-        SoundManager.ERROR_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
 
         SoundManager.MAIL_SEND_SOUND.volumeProperty().bind(paramVolumeSlider.valueProperty());
         SoundManager.MAIL_RECV_SOUND.volumeProperty().bind(paramVolumeSlider.valueProperty());
-        SoundManager.ERROR_SOUND.volumeProperty().bind(paramVolumeSlider.valueProperty());
 
         paramVolumeSlider.disableProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
 
         App.getMailManager().getSettings().load();
         App.getSendEmailService().setOnFailed(workerStateEvent -> {
-            messageLabel.setText("Impossible d'envoyer l'email: " + workerStateEvent.getSource().getException().getMessage());
-            SoundManager.ERROR_SOUND.stop();
-            SoundManager.ERROR_SOUND.play();
+            messageLabel.setText("Impossible d'envoyer l'email");
+            App.notification("Mail error", workerStateEvent.getSource().getException().getMessage(), TrayIcon.MessageType.ERROR);
             FadeTransition fadeTransition = new FadeTransition();
             fadeTransition.setNode(mailSendingProgressIndicator);
             fadeTransition.setDuration(Duration.millis(1000));
@@ -106,6 +113,10 @@ public class MailController implements Initializable
         });
         App.getSendEmailService().setOnSucceeded(workerStateEvent -> {
             messageLabel.setText("Mail envoyé");
+            mailMessageLabel.clear();
+            mailObjetLabel.clear();
+            htmlMessageTextArea.setHtmlText("");
+            App.notification("Mail envoyé", "Succès!", TrayIcon.MessageType.INFO);
             SoundManager.MAIL_SEND_SOUND.stop();
             SoundManager.MAIL_SEND_SOUND.play();
             FadeTransition fadeTransition = new FadeTransition();
@@ -136,7 +147,7 @@ public class MailController implements Initializable
         nameColumn.setMinWidth(300);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Receiver, String> emailColumn = new TableColumn<>("Email");
-        emailColumn.setMinWidth(530);
+        emailColumn.setMinWidth(611);
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         carnetAddrTableView.getColumns().clear();
@@ -153,17 +164,18 @@ public class MailController implements Initializable
 
     public void initSettingsControls()
     {
-        paramPasswordTextField.disableProperty().bind(paramAuthenticationCheckBox.selectedProperty().not());
+        paramPasswordTextField.disableProperty().bind(paramSmtpAuthenticationCheckBox.selectedProperty().not());
 
         paramSmtpServerTextField.setText(App.getMailManager().getSettings().getSmtpServer());
-        paramPortSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
-        paramPortSpinner.getValueFactory().setValue(App.getMailManager().getSettings().getSmtpPort());
-        paramTtlsCheckBox.setSelected(App.getMailManager().getSettings().getTtls());
-        paramAuthenticationCheckBox.setSelected(App.getMailManager().getSettings().getAuthentication());
+        paramSmtpPortSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
+        paramSmtpPortSpinner.getValueFactory().setValue(App.getMailManager().getSettings().getSmtpPort());
+        paramSmtpTtlsCheckBox.setSelected(App.getMailManager().getSettings().getTtls());
+        paramSmtpAuthenticationCheckBox.setSelected(App.getMailManager().getSettings().getAuthentication());
         paramEmailTextField.setText(App.getMailManager().getSettings().getEmail());
         paramPasswordTextField.setText(App.getMailManager().getSettings().getPassword());
         paramEnableSoundEffectCheckBox.setSelected(App.getMailManager().getSettings().getEnableSoundEffect());
         paramVolumeSlider.setValue(App.getMailManager().getSettings().getVolume());
+        paramEnableNotificationsCheckBox.setSelected(App.getMailManager().getSettings().getEnableNotifications());
 
     }
 
@@ -172,13 +184,14 @@ public class MailController implements Initializable
     {
         Settings settings = App.getMailManager().getSettings();
         settings.setSmtpServer(paramSmtpServerTextField.getText());
-        settings.setSmtpPort(paramPortSpinner.getValue());
-        settings.setTtls(paramTtlsCheckBox.isSelected());
-        settings.setAuthentication(paramAuthenticationCheckBox.isSelected());
+        settings.setSmtpPort(paramSmtpPortSpinner.getValue());
+        settings.setTtls(paramSmtpTtlsCheckBox.isSelected());
+        settings.setAuthentication(paramSmtpAuthenticationCheckBox.isSelected());
         settings.setEmail(paramEmailTextField.getText());
         settings.setPassword(paramPasswordTextField.getText());
         settings.setEnableSoundEffect(paramEnableSoundEffectCheckBox.isSelected());
         settings.setVolume(paramVolumeSlider.getValue());
+        settings.setEnableNotifications(paramEnableNotificationsCheckBox.isSelected());
         settings.save();
         messageLabel.setText("Paramètres sauvegardés");
     }
@@ -221,16 +234,18 @@ public class MailController implements Initializable
     {
         if(!App.getSendEmailService().isRunning())
         {
-            if(emailLabel.getText().isBlank() || mailObjetLabel.getText().isBlank() || mailMessageLabel.getText().isBlank())
+            if(emailLabel.getText().isBlank() || mailObjetLabel.getText().isBlank())
             {
                 messageLabel.setText("Les champs doivent être remplis");
             }
             else
             {
+                String text = plainTextTab.isSelected() ? mailMessageLabel.getText() : htmlMessageTextArea.getHtmlText();
                 App.getSendEmailService().setInfos(
                         emailLabel.getText(),
                         mailObjetLabel.getText(),
-                        mailMessageLabel.getText());
+                        text,
+                        attachedFilesComboBox.getItems());
                 App.getSendEmailService().reset();
                 App.getSendEmailService().start();
             }
@@ -246,7 +261,11 @@ public class MailController implements Initializable
     {
         FileChooser chooser = new FileChooser();
         var files = chooser.showOpenMultipleDialog(App.getStage());
-        attachedFilesComboBox.getItems().addAll(files);
+        if(files != null)
+        {
+            attachedFilesComboBox.getItems().addAll(files);
+            attachedFilesComboBox.getSelectionModel().selectLast();
+        }
     }
 
     @FXML
@@ -259,17 +278,28 @@ public class MailController implements Initializable
     }
 
     @FXML
+    public void cancel_Action()
+    {
+        mailObjetLabel.clear();
+        mailMessageLabel.clear();
+        attachedFilesComboBox.getItems().clear();
+    }
+
+    @FXML
     public void testSmtp_Action()
     {
         switch(App.getMailManager().testSmtpAccess())
         {
             case 1:
+                messageLabel.setText("SMTP connection success");
                 App.notification("SMTP connection success", App.getMailManager().getSettings().getSmtpServer(), TrayIcon.MessageType.INFO);
                 break;
             case 2:
+                messageLabel.setText("SMTP autentication failed");
                 App.notification("SMTP autentication failed", App.getMailManager().getSettings().getEmail(), TrayIcon.MessageType.WARNING);
                 break;
             case 3:
+                messageLabel.setText("SMTP server not recognized");
                 App.notification("SMTP server not recognized", App.getMailManager().getSettings().getSmtpServer(), TrayIcon.MessageType.ERROR);
                 break;
         }

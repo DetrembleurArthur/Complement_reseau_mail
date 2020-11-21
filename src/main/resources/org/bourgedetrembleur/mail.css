@@ -1,5 +1,5 @@
 
-.main-panel, .button, .tab-pane .tab-header-area .tab,
+.main-panel, .button, .toggle-button, .tab-pane .tab-header-area .tab,
 .combo-box, .combo-box .combo-box-popup .list-view,
 .combo-box .combo-box-popup .list-view .list-cell,
 .scroll-pane .content, .text-area, .scroll-pane .corner
@@ -15,9 +15,35 @@
 , .table-row-cell
 , .tree-view
 , .tree-cell
+, .html-editor
+, .html-editor .grid
+, .html-editor .grid .top-toolbar
+, .html-editor .grid .bottom-toolbar
+, .color-picker
 {
     -fx-background-color :rgb(32, 33, 36);
     -fx-border-color : rgb(32, 33, 36);
+}
+
+@keyframes opacity_animation {
+    0% {
+        -fx-opacity: 0.1;
+    }
+
+    100% {
+        -fx-opacity: 1;
+    }
+}
+
+.web-view
+{
+    -fx-opacity: 0.5;
+
+}
+
+.web-view:hover
+{
+    -fx-opacity: 1;
 }
 
 .table-row-cell:selected, .table-row-cell:hover, .slider .track, .slider .thumb
@@ -39,7 +65,7 @@
 
 }
 
-.button, .tab-pane .tab-header-area .control-buttons-tab,
+.button, .toggle-button, .tab-pane .tab-header-area .control-buttons-tab,
 .tab-pane .tab-header-area .control-buttons-tab .tab-down-button .arrow
 {
     -fx-text-fill: rgb(138, 180, 248);
@@ -73,12 +99,12 @@
     -fx-text-fill: rgb(138, 180, 248);
 }
 
-.button:hover
+.button:hover, .toggle-button:hover
 {
     -fx-background-color: rgb(40, 40, 50);
 }
 
-.button:pressed, .table-view .table-cell
+.button:pressed, .table-view .table-cell, .toggle-button:pressed
 {
     -fx-background-color: rgb(50, 50, 60);
 }

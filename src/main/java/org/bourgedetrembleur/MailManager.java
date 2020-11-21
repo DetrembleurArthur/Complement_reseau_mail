@@ -2,9 +2,14 @@ package org.bourgedetrembleur;
 
 import javafx.concurrent.Task;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.swing.*;
 import java.io.File;
 import java.util.List;
@@ -59,24 +64,65 @@ public class MailManager {
         return 3;
     }
 
-    public MimeMessage generateMessage(Session session, String destination, String object, String message) throws MessagingException
+    public MimeMessage generateMessage(Session session, String destination, String object) throws MessagingException
     {
         MimeMessage msg = new MimeMessage(session);
         if(!getSettings().getAuthentication())
             msg.setFrom(new InternetAddress(getSettings().getEmail()));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(destination));
         msg.setSubject(object);
-        msg.setText(message);
         return msg;
     }
 
-    public Multipart generateMultipart(MimeMessage mimeMessage, List<File> attachedFiles)
+    public MimeMessage setMessageText(MimeMessage msg, String text)
+    {
+        try
+        {
+            msg.setText(text);
+        } catch (MessagingException e)
+        {
+            e.printStackTrace();
+        }
+        return msg;
+    }
+
+    public Multipart generateMultipart(List<File> attachedFiles, String text)
     {
         if(attachedFiles != null)
         {
-            
+            try
+            {
+                Multipart multipart = new MimeMultipart();
+                MimeBodyPart attachText = new MimeBodyPart();
+                attachText.setText(text);
+                multipart.addBodyPart(attachText);
+                for (var file : attachedFiles)
+                {
+                    MimeBodyPart mimeBodyPart = new MimeBodyPart();
+                    DataSource dataSource = new FileDataSource(file);
+                    mimeBodyPart.setDataHandler(new DataHandler(dataSource));
+                    mimeBodyPart.setFileName(file.getName());
+                    multipart.addBodyPart(mimeBodyPart);
+                }
+                return multipart;
+            }
+            catch (MessagingException e)
+            {
+                e.printStackTrace();
+            }
         }
         return null;
+    }
+
+    public void attachMultipart(MimeMessage mimeMessage, Multipart multipart)
+    {
+        try
+        {
+            mimeMessage.setContent(multipart);
+        } catch (MessagingException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void sendMessage(Message message) throws MessagingException

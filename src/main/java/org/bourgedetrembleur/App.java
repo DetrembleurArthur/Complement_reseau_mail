@@ -71,17 +71,12 @@ public class App extends Application {
 
     public static void notification(String caption, String message, TrayIcon.MessageType type)
     {
+        if(!getMailManager().getSettings().getEnableNotifications()) return;
         SystemTray tray = SystemTray.getSystemTray();
 
-        //If the icon is a file
         Image image = Toolkit.getDefaultToolkit().createImage("java.png");
-        //Alternative (if the icon is on the classpath):
-        //Image image = Toolkit.getToolkit().createImage(getClass().getResource("java.png"));
-
         TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
-        //Let the system resize the image if needed
         trayIcon.setImageAutoSize(true);
-        //Set tooltip text for the tray icon
         trayIcon.setToolTip("System tray icon demo");
         try
         {

@@ -21,8 +21,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.HTMLEditor?>
 
-<AnchorPane prefHeight="643.0" prefWidth="922.0" styleClass="main-panel" stylesheets="@mail.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
+<AnchorPane prefHeight="762.0" prefWidth="1005.0" styleClass="main-panel" stylesheets="@mail.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.bourgedetrembleur.MailController">
    <children>
       <TabPane fx:id="mainTabPane" layoutX="27.0" layoutY="27.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="585.0" prefWidth="870.0" styleClass="secondary-panel" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="26.0">
         <tabs>
@@ -66,10 +67,27 @@
                               <Insets left="20.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox prefHeight="201.0" prefWidth="850.0" spacing="38.0">
+                        <HBox prefHeight="323.0" prefWidth="933.0" spacing="38.0">
                            <children>
                               <Label text="Message: " />
-                              <TextArea fx:id="mailMessageLabel" prefHeight="186.0" prefWidth="684.0" />
+                              <TabPane side="BOTTOM">
+                                 <tabs>
+                                    <Tab fx:id="plainTextTab" closable="false" text="Plain text">
+                                       <content>
+                                          <TextArea fx:id="mailMessageLabel" prefHeight="226.0" prefWidth="692.0" />
+                                       </content>
+                                    </Tab>
+                                    <Tab closable="false" text="Html text">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <HTMLEditor fx:id="htmlMessageTextArea" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="248.0" prefWidth="692.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
                            </children>
                            <padding>
                               <Insets top="10.0" />
@@ -91,10 +109,10 @@
                               <Insets left="80.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="50.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="954.0" spacing="50.0">
                            <children>
                               <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendEmail_Action" text="Envoyer" />
-                              <Button mnemonicParsing="false" text="Annuler" />
+                              <Button mnemonicParsing="false" onAction="#cancel_Action" text="Annuler" />
                               <ProgressIndicator fx:id="mailSendingProgressIndicator" opacity="0.0" progress="0.0" />
                            </children>
                            <padding>
@@ -116,7 +134,7 @@
                         <TableView fx:id="carnetAddrTableView" editable="true" prefHeight="420.0" prefWidth="870.0">
                           <columns>
                             <TableColumn prefWidth="300.0" text="Nom" />
-                            <TableColumn editable="false" prefWidth="530.0" text="email" />
+                            <TableColumn editable="false" prefWidth="611.0" text="email" />
                           </columns>
                            <padding>
                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -170,14 +188,14 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="454.0" prefWidth="870.0" styleClass="secondary-panel">
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="500.0" prefWidth="953.0" styleClass="secondary-panel" vvalue="1.0">
                            <content>
                               <VBox prefHeight="172.0" prefWidth="874.0" styleClass="secondary-panel">
                                  <children>
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefHeight="17.0" prefWidth="200.0" text="Serveur smtp: " />
-                                          <TextField fx:id="paramSmtpServerTextField" prefWidth="500.0" />
+                                          <TextField fx:id="paramSmtpServerTextField" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -186,7 +204,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="Port: " />
-                                          <Spinner fx:id="paramPortSpinner" editable="true" prefWidth="500.0" />
+                                          <Spinner fx:id="paramSmtpPortSpinner" editable="true" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -195,7 +213,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="ttls: " />
-                                          <CheckBox fx:id="paramTtlsCheckBox" mnemonicParsing="false" prefWidth="500.0" />
+                                          <CheckBox fx:id="paramSmtpTtlsCheckBox" mnemonicParsing="false" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -204,7 +222,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="authentification: " />
-                                          <CheckBox fx:id="paramAuthenticationCheckBox" mnemonicParsing="false" prefWidth="500.0" />
+                                          <CheckBox fx:id="paramSmtpAuthenticationCheckBox" mnemonicParsing="false" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -213,7 +231,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="compte mail: " />
-                                          <TextField fx:id="paramEmailTextField" prefWidth="500.0" />
+                                          <TextField fx:id="paramEmailTextField" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -222,7 +240,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="mot de passe: " />
-                                          <PasswordField fx:id="paramPasswordTextField" prefWidth="500.0" />
+                                          <PasswordField fx:id="paramPasswordTextField" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -231,7 +249,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefHeight="17.0" prefWidth="200.0" text="Serveur pop3: " />
-                                          <TextField prefWidth="500.0" />
+                                          <TextField prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="30.0" />
@@ -240,7 +258,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="Port: " />
-                                          <Spinner editable="true" prefWidth="500.0" />
+                                          <Spinner editable="true" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -249,7 +267,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="Disable top:" />
-                                          <CheckBox mnemonicParsing="false" prefWidth="500.0" />
+                                          <CheckBox mnemonicParsing="false" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -258,7 +276,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="compte mail: " />
-                                          <TextField fx:id="paramEmailTextField1" prefWidth="500.0" />
+                                          <TextField fx:id="paramEmailTextField1" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -267,7 +285,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="mot de passe: " />
-                                          <PasswordField fx:id="paramPasswordTextField1" prefWidth="500.0" />
+                                          <PasswordField fx:id="paramPasswordTextField1" prefWidth="600.0" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -276,7 +294,7 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="Enable sound effects:" />
-                                          <CheckBox fx:id="paramEnableSoundEffectCheckBox" mnemonicParsing="false" prefWidth="500.0" selected="true" />
+                                          <CheckBox fx:id="paramEnableSoundEffectCheckBox" mnemonicParsing="false" prefWidth="600.0" selected="true" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -288,7 +306,16 @@
                                     <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
                                        <children>
                                           <Label prefWidth="200.0" text="Volume:" />
-                                          <Slider fx:id="paramVolumeSlider" blockIncrement="0.05" max="1.0" prefWidth="500.0" value="0.5" />
+                                          <Slider fx:id="paramVolumeSlider" blockIncrement="0.05" max="1.0" prefWidth="600.0" value="0.5" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_LEFT" prefHeight="4.0" prefWidth="527.0" spacing="60.0">
+                                       <children>
+                                          <Label prefWidth="200.0" text="Enable notifications:" />
+                                          <CheckBox fx:id="paramEnableNotificationsCheckBox" mnemonicParsing="false" prefWidth="600.0" selected="true" />
                                        </children>
                                        <padding>
                                           <Insets left="20.0" top="10.0" />
@@ -303,7 +330,7 @@
                         </ScrollPane>
                         <HBox spacing="60.0">
                            <VBox.margin>
-                              <Insets left="50.0" top="60.0" />
+                              <Insets bottom="20.0" left="50.0" top="60.0" />
                            </VBox.margin>
                            <children>
                               <Button mnemonicParsing="false" onAction="#saveSettings_Action" text="Save" textAlignment="CENTER" />
@@ -316,8 +343,8 @@
             </Tab>
         </tabs>
       </TabPane>
-      <Button layoutX="831.0" layoutY="582.0" mnemonicParsing="false" onAction="#quit_Action" text="Quitter" />
-      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="27.0" layoutY="621.0" prefHeight="27.0" prefWidth="870.0" textAlignment="CENTER">
+      <Button layoutX="891.0" layoutY="708.0" mnemonicParsing="false" onAction="#quit_Action" text="Quitter" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="708.0" prefHeight="27.0" prefWidth="953.0" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

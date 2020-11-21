@@ -28,6 +28,7 @@ public class Settings
                 setPassword("no password");
                 setEnableSoundEffect(false);
                 setVolume(0.5f);
+                setEnableNotifications(true);
                 save();
                 JOptionPane.showMessageDialog(null, "Veuillez compléter vos paramètres");
 
@@ -89,6 +90,11 @@ public class Settings
         properties.setProperty("volume", String.valueOf(volume));
     }
 
+    public void setEnableNotifications(boolean enable)
+    {
+        properties.setProperty("enableNotifications", String.valueOf(enable));
+    }
+
     public String getSmtpServer()
     {
         return properties.getProperty("smtp.server");
@@ -127,6 +133,11 @@ public class Settings
     public double getVolume()
     {
         return Double.parseDouble(properties.getProperty("volume"));
+    }
+
+    public boolean getEnableNotifications()
+    {
+        return Boolean.parseBoolean(properties.getProperty("enableNotifications"));
     }
 }
 
