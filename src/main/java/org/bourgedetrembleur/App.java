@@ -19,6 +19,7 @@ public class App extends Application {
 
     private static final MailManager mailManager = new MailManager();
     private static final SendEmailService sendEmailService = new SendEmailService(mailManager);
+    private static final RecvEmailService recvEmailService = new RecvEmailService(mailManager);
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -97,5 +98,10 @@ public class App extends Application {
         {
             tray.remove(icon);
         }
+    }
+
+    public static RecvEmailService getRecvEmailService()
+    {
+        return recvEmailService;
     }
 }

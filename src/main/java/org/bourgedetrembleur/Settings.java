@@ -1,6 +1,7 @@
 package org.bourgedetrembleur;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.Properties;
 
@@ -29,8 +30,10 @@ public class Settings
                 setEnableSoundEffect(false);
                 setVolume(0.5f);
                 setEnableNotifications(true);
+                setPop3Server("no server");
+                setPop3Port(0);
                 save();
-                JOptionPane.showMessageDialog(null, "Veuillez compléter vos paramètres");
+                App.notification("Warning", "Veuillez compléter vos paramètres", TrayIcon.MessageType.WARNING);
 
             } catch (IOException ioException)
             {
@@ -95,6 +98,16 @@ public class Settings
         properties.setProperty("enableNotifications", String.valueOf(enable));
     }
 
+    public void setPop3Server(String server)
+    {
+        properties.setProperty("pop3.server", server);
+    }
+
+    public void setPop3Port(int port)
+    {
+        properties.setProperty("pop3.port", Integer.toString(port));
+    }
+
     public String getSmtpServer()
     {
         return properties.getProperty("smtp.server");
@@ -138,6 +151,16 @@ public class Settings
     public boolean getEnableNotifications()
     {
         return Boolean.parseBoolean(properties.getProperty("enableNotifications"));
+    }
+
+    public String getPop3Server()
+    {
+        return properties.getProperty("pop3.server");
+    }
+
+    public int getPop3Port()
+    {
+        return Integer.parseInt(properties.getProperty("pop3.port"));
     }
 }
 

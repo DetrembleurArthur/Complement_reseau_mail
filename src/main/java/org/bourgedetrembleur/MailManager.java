@@ -1,7 +1,5 @@
 package org.bourgedetrembleur;
 
-import javafx.concurrent.Task;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -10,7 +8,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.swing.*;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
@@ -30,7 +27,7 @@ public class MailManager {
         return prop;
     }
 
-    public Session getSession(Properties prop) {
+    public Session getSmtpSession(Properties prop) {
         Session session = null;
         if (getSettings().getAuthentication()) {
             session = Session.getInstance(prop, new javax.mail.Authenticator() {
@@ -44,9 +41,37 @@ public class MailManager {
         return session;
     }
 
+    public Message[] receivePop3()
+    {
+        Properties prop = System.getProperties();
+        prop.put("mail.pop3.host", getSettings().getPop3Server());
+        prop.put("mail.disable.top", true);
+        prop.put("mail.pop3.socketFactory", getSettings().getPop3Port());
+        prop.put("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //!!!!!!
+        Session session = Session.getDefaultInstance(prop);
+        try
+        {
+            Store store = session.getStore("pop3");
+            System.err.println("connection...");
+            store.connect(getSettings().getPop3Server(), getSettings().getPop3Port(), getSettings().getEmail(), getSettings().getPassword());
+
+            Folder folder = store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            Message[] messages = folder.getMessages();
+
+
+            return messages;
+        } catch (MessagingException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public int testSmtpAccess() {
         Properties props = getSmtpProperties();
-        Session session = getSession(props);
+        Session session = getSmtpSession(props);
         
         try {
             Transport transport = session.getTransport("smtp");
@@ -74,28 +99,16 @@ public class MailManager {
         return msg;
     }
 
-    public MimeMessage setMessageText(MimeMessage msg, String text)
+    public Multipart generateMultipart(List<File> attachedFiles, String text)
     {
         try
         {
-            msg.setText(text);
-        } catch (MessagingException e)
-        {
-            e.printStackTrace();
-        }
-        return msg;
-    }
-
-    public Multipart generateMultipart(List<File> attachedFiles, String text)
-    {
-        if(attachedFiles != null)
-        {
-            try
+            Multipart multipart = new MimeMultipart();
+            MimeBodyPart attachText = new MimeBodyPart();
+            attachText.setText(text);
+            multipart.addBodyPart(attachText);
+            if(attachedFiles != null && !attachedFiles.isEmpty())
             {
-                Multipart multipart = new MimeMultipart();
-                MimeBodyPart attachText = new MimeBodyPart();
-                attachText.setText(text);
-                multipart.addBodyPart(attachText);
                 for (var file : attachedFiles)
                 {
                     MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -104,12 +117,12 @@ public class MailManager {
                     mimeBodyPart.setFileName(file.getName());
                     multipart.addBodyPart(mimeBodyPart);
                 }
-                return multipart;
             }
-            catch (MessagingException e)
-            {
-                e.printStackTrace();
-            }
+            return multipart;
+        }
+        catch (MessagingException e)
+        {
+            e.printStackTrace();
         }
         return null;
     }

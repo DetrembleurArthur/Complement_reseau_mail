@@ -3,7 +3,6 @@ package org.bourgedetrembleur;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
-import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -35,22 +34,14 @@ public class SendEmailService extends Service<Void>
                 updateProgress(0f, 100f);
                 Properties properties = mailManager.getSmtpProperties();
                 updateProgress(20f, 100f);
-                Session session = mailManager.getSession(properties);
+                Session session = mailManager.getSmtpSession(properties);
                 updateProgress(40f, 100f);
                 MimeMessage msg = mailManager.generateMessage(session, email, objet);
                 updateProgress(60f, 100f);
-                if(attachedFiles != null && !attachedFiles.isEmpty())
-                {
-                    Multipart multipart = mailManager.generateMultipart(attachedFiles, message);
-                    updateProgress(70f, 100f);
-                    mailManager.attachMultipart(msg, multipart);
-                    updateProgress(80f, 100f);
-                }
-                else
-                {
-                    mailManager.setMessageText(msg, message);
-                    updateProgress(70f, 100f);
-                }
+                Multipart multipart = mailManager.generateMultipart(attachedFiles, message);
+                updateProgress(70f, 100f);
+                mailManager.attachMultipart(msg, multipart);
+                updateProgress(80f, 100f);
                 mailManager.sendMessage(msg);
                 updateProgress(100f, 100f);
                 attachedFiles = null;

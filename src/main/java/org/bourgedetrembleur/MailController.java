@@ -87,6 +87,12 @@ public class MailController implements Initializable
     @FXML
     CheckBox paramEnableNotificationsCheckBox;
 
+    @FXML
+    TextField paramPop3ServerTextField;
+
+    @FXML
+    Spinner<Integer> paramPop3PortSpinner;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -116,6 +122,7 @@ public class MailController implements Initializable
             mailMessageLabel.clear();
             mailObjetLabel.clear();
             htmlMessageTextArea.setHtmlText("");
+            attachedFilesComboBox.getItems().clear();
             App.notification("Mail envoyé", "Succès!", TrayIcon.MessageType.INFO);
             SoundManager.MAIL_SEND_SOUND.stop();
             SoundManager.MAIL_SEND_SOUND.play();
@@ -164,7 +171,6 @@ public class MailController implements Initializable
 
     public void initSettingsControls()
     {
-        paramPasswordTextField.disableProperty().bind(paramSmtpAuthenticationCheckBox.selectedProperty().not());
 
         paramSmtpServerTextField.setText(App.getMailManager().getSettings().getSmtpServer());
         paramSmtpPortSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
@@ -176,6 +182,10 @@ public class MailController implements Initializable
         paramEnableSoundEffectCheckBox.setSelected(App.getMailManager().getSettings().getEnableSoundEffect());
         paramVolumeSlider.setValue(App.getMailManager().getSettings().getVolume());
         paramEnableNotificationsCheckBox.setSelected(App.getMailManager().getSettings().getEnableNotifications());
+        paramPop3ServerTextField.setText(App.getMailManager().getSettings().getPop3Server());
+        paramPop3PortSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
+        paramPop3PortSpinner.getValueFactory().setValue(App.getMailManager().getSettings().getPop3Port());
+
 
     }
 
@@ -192,6 +202,8 @@ public class MailController implements Initializable
         settings.setEnableSoundEffect(paramEnableSoundEffectCheckBox.isSelected());
         settings.setVolume(paramVolumeSlider.getValue());
         settings.setEnableNotifications(paramEnableNotificationsCheckBox.isSelected());
+        settings.setPop3Server(paramPop3ServerTextField.getText());
+        settings.setPop3Port(paramPop3PortSpinner.getValue());
         settings.save();
         messageLabel.setText("Paramètres sauvegardés");
     }
@@ -302,6 +314,16 @@ public class MailController implements Initializable
                 messageLabel.setText("SMTP server not recognized");
                 App.notification("SMTP server not recognized", App.getMailManager().getSettings().getSmtpServer(), TrayIcon.MessageType.ERROR);
                 break;
+        }
+    }
+
+    @FXML
+    public void delete_Action()
+    {
+        if(!App.getRecvEmailService().isRunning())
+        {
+            App.getRecvEmailService().reset();
+            App.getRecvEmailService().start();
         }
     }
 }

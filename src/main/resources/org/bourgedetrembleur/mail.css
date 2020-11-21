@@ -115,7 +115,7 @@
 .tab-pane .tab-header-area .tab-header-background,
 .table-view
 , .scroll-pane
-, .scroll-pane .viewport
+, .scroll-pane .viewport, .tool-bar
 {
     -fx-background-color :rgb(41, 42, 45);
 }
