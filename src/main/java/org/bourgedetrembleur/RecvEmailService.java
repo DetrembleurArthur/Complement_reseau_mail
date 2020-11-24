@@ -39,7 +39,7 @@ public class RecvEmailService extends Service<List<ViewMessage>>
 
                     for(int i = 0; i < nbnew - nb; i++)
                     {
-                        if(!messages[nbnew-i-1].getFrom()[0].toString().equalsIgnoreCase("detart.dummy@gmail.com"))
+                        if(!messages[nbnew-i-1].getFrom()[0].toString().equalsIgnoreCase(mailManager.getSettings().getEmail()))
                             returnMessagesList.add(new ViewMessage(messages[nbnew-i-1]));
                     }
                     nb = nbnew;
