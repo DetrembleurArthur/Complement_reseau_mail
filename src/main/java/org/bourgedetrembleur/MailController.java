@@ -3,27 +3,24 @@ package org.bourgedetrembleur;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import javax.mail.Message;
+import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.util.Collection;
+import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 public class MailController implements Initializable
@@ -124,10 +121,13 @@ public class MailController implements Initializable
     SplitPane mailRecvSplitpane;
 
     @FXML
-    VBox mailRecvVbox;
+    Tab mailRecvTab;
 
     @FXML
-    ScrollPane mailScrollpane;
+    ComboBox<ViewMessage> choiceMailComboBox;
+
+    @FXML
+    TreeView<?> mailTreeView;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -146,7 +146,10 @@ public class MailController implements Initializable
             System.err.println("Update");
             //inboxMailsListView.getItems().clear();
             if(t1.size() > 0)
+            {
+                mailRecvTab.setText("Réception de mails (" + t1.size() + ")");
                 inboxMailsListView.getItems().addAll(t1);
+            }
         });
 
 
@@ -204,6 +207,8 @@ public class MailController implements Initializable
             fadeTransition.playFromStart();
         });
         mailSendingProgressIndicator.progressProperty().bind(App.getSendEmailService().progressProperty());
+
+        choiceMailComboBox.itemsProperty().bind(inboxMailsListView.itemsProperty());
 
         initSettingsControls();
         initCarnetAddrControls();
@@ -402,13 +407,12 @@ public class MailController implements Initializable
         dateRecvLabel.setText(message.getMessage().getSentDate().toString());
 
         String text = message.getMessageText();
-        System.err.println("HERE");
         if(text == null)
         {
-            System.err.println("if");
             for(var part : message.getParts())
             {
                 System.err.println(part.getContentType());
+
 
                 String disp = part.getDisposition();
                 System.err.println(">>>>> " + part.getContentType());
@@ -460,8 +464,24 @@ public class MailController implements Initializable
                 byteArrayOutputStream.writeTo(fileOutputStream);
                 fileOutputStream.close();
             }
+        }
+    }
 
 
+
+    @FXML
+    public void analyse_message_Action() throws MessagingException
+    {
+        ViewMessage message = choiceMailComboBox.getSelectionModel().getSelectedItem();
+        if(message != null)
+        {
+            Enumeration<Header> headerEnum = message.getMessage().getAllHeaders();
+            Header header = headerEnum.nextElement();
+            while(headerEnum.hasMoreElements())
+            {
+                System.err.println(header.getName() + " ::: " + header.getValue());
+                header = headerEnum.nextElement();
+            }
         }
     }
 }

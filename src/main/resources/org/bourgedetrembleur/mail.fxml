@@ -130,7 +130,7 @@
                   </VBox>
                </content>
             </Tab>
-          <Tab text="Réception de mails">
+          <Tab fx:id="mailRecvTab" text="Réception de mails">
                <content>
                   <BorderPane prefHeight="200.0" prefWidth="200.0">
                      <center>
@@ -212,14 +212,14 @@
                      <children>
                         <HBox prefHeight="61.0" prefWidth="507.0" spacing="60.0">
                            <children>
-                              <Label text="Label" />
-                              <ComboBox prefWidth="150.0" />
+                              <Label prefHeight="17.0" prefWidth="138.0" text="Choisir un mail: " />
+                              <ComboBox fx:id="choiceMailComboBox" onAction="#analyse_message_Action" prefWidth="150.0" />
                            </children>
                            <VBox.margin>
                               <Insets left="20.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
-                        <TreeView prefHeight="198.0" prefWidth="487.0">
+                        <TreeView fx:id="mailTreeView" prefHeight="198.0" prefWidth="487.0">
                            <VBox.margin>
                               <Insets left="20.0" right="20.0" top="10.0" />
                            </VBox.margin>
