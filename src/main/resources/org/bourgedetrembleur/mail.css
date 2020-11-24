@@ -35,6 +35,8 @@
     -fx-fill: rgb(138, 180, 248);
 }
 
+
+
 @keyframes opacity_animation {
     0% {
         -fx-opacity: 0.1;
@@ -169,4 +171,10 @@
 .progress-indicator .percentage
 {
     -fx-fill: white;
+}
+
+
+.list-cell:hover
+{
+    -fx-background-color: rgb(53, 53, 53);
 }

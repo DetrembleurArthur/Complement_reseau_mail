@@ -134,7 +134,7 @@
                <content>
                   <BorderPane prefHeight="200.0" prefWidth="200.0">
                      <center>
-                        <SplitPane fx:id="mailRecvSplitpane" dividerPositions="0.3" prefHeight="657.0" prefWidth="953.0" BorderPane.alignment="CENTER">
+                        <SplitPane fx:id="mailRecvSplitpane" dividerPositions="0.4" prefHeight="657.0" prefWidth="953.0" BorderPane.alignment="CENTER">
                            <items>
                               <ListView fx:id="inboxMailsListView" prefHeight="632.0" />
                               <VBox prefHeight="654.0" prefWidth="663.0">
@@ -180,7 +180,8 @@
                         </SplitPane>
                      </center>
                   </BorderPane>
-               </content></Tab>
+               </content>
+            </Tab>
             <Tab text="Carnet d'adresses">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0" styleClass="secondary-panel">
@@ -205,7 +206,8 @@
                         </HBox>
                      </children>
                   </VBox>
-               </content></Tab>
+               </content>
+            </Tab>
             <Tab text="Analyse des mails">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">

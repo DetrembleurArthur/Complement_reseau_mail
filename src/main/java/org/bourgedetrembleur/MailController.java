@@ -1,6 +1,7 @@
 package org.bourgedetrembleur;
 
 import javafx.animation.FadeTransition;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -20,6 +21,7 @@ import javax.mail.Part;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
@@ -148,8 +150,26 @@ public class MailController implements Initializable
             if(t1.size() > 0)
             {
                 mailRecvTab.setText("Réception de mails (" + t1.size() + ")");
+                App.notification("Nouveaux messages", t1.size() + " nouveaux messages", TrayIcon.MessageType.INFO);
                 inboxMailsListView.getItems().addAll(t1);
+                inboxMailsListView.getItems().sort(new Comparator<ViewMessage>(){
+                    public int compare(ViewMessage a, ViewMessage b)
+                    {
+                        try {
+                            return b.getMessage().getSentDate().compareTo(a.getMessage().getSentDate());
+                        } catch (MessagingException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        return -1;
+                    }
+                });
             }
+        });
+
+        mailRecvTab.setOnSelectionChanged((e)->
+        {
+            mailRecvTab.setText("Réception de mails");
         });
 
 

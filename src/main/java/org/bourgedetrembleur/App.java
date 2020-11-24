@@ -1,6 +1,7 @@
 package org.bourgedetrembleur;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,7 +36,8 @@ public class App extends Application {
     {
         super.stop();
         recvEmailService.cancel();
-        clearNotifications();
+        Thread.sleep(1000);
+        System.exit(0);
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -91,15 +93,6 @@ public class App extends Application {
         trayIcon.displayMessage(caption, message, type);
     }
 
-    public static void clearNotifications()
-    {
-        System.err.println("clear notifications");
-        SystemTray tray = SystemTray.getSystemTray();
-        for(var icon : tray.getTrayIcons())
-        {
-            tray.remove(icon);
-        }
-    }
 
     public static RecvEmailService getRecvEmailService()
     {
