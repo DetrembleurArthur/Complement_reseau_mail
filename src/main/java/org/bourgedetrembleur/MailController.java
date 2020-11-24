@@ -9,13 +9,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Part;
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.net.URL;
+import java.util.Collection;
 import java.util.ResourceBundle;
 
 public class MailController implements Initializable
@@ -93,10 +99,51 @@ public class MailController implements Initializable
     @FXML
     Spinner<Integer> paramPop3PortSpinner;
 
+    @FXML
+    ListView<ViewMessage> inboxMailsListView;
+
+    @FXML
+    TextArea mailContentRecvTextArea;
+
+    @FXML
+    WebView mailContentRecvWebView;
+
+    @FXML
+    StackPane mailViewStackPane;
+
+    @FXML
+    ComboBox<PieceView> attachedPiecesComboBox;
+
+
+    @FXML
+    Label fromRecvLabel;
+
+    @FXML
+    Label subjectRecvLabel;
+
+    @FXML
+    Label dateRecvLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        inboxMailsListView.getSelectionModel().selectedItemProperty().addListener((observableValue, viewMessage, t1) -> {
+            try
+            {
+                select_receive_message();
+            } catch (MessagingException | IOException e)
+            {
+                e.printStackTrace();
+            }
+        });
+
+        App.getRecvEmailService().valueProperty().addListener((observableValue, viewMessages, t1) -> {
+            System.err.println("Update");
+            //inboxMailsListView.getItems().clear();
+            if(t1.size() > 0)
+                inboxMailsListView.getItems().addAll(t1);
+        });
+
 
         SoundManager.MAIL_SEND_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
         SoundManager.MAIL_RECV_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
@@ -107,6 +154,15 @@ public class MailController implements Initializable
         paramVolumeSlider.disableProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
 
         App.getMailManager().getSettings().load();
+
+
+        if(!App.getRecvEmailService().isRunning())
+        {
+            App.getRecvEmailService().reset();
+            App.getRecvEmailService().start();
+        }
+
+
         App.getSendEmailService().setOnFailed(workerStateEvent -> {
             messageLabel.setText("Impossible d'envoyer l'email");
             App.notification("Mail error", workerStateEvent.getSource().getException().getMessage(), TrayIcon.MessageType.ERROR);
@@ -320,10 +376,90 @@ public class MailController implements Initializable
     @FXML
     public void delete_Action()
     {
-        if(!App.getRecvEmailService().isRunning())
+
+    }
+
+    public void select_receive_message() throws MessagingException, IOException
+    {
+
+        mailContentRecvTextArea.clear();
+        mailContentRecvWebView.getEngine().loadContent("");
+        attachedPiecesComboBox.getItems().clear();
+
+        var message = inboxMailsListView.getSelectionModel().getSelectedItem();
+
+
+        fromRecvLabel.setText(message.getMessage().getFrom()[0].toString());
+        subjectRecvLabel.setText(message.getMessage().getSubject());
+        dateRecvLabel.setText(message.getMessage().getSentDate().toString());
+
+        String text = message.getMessageText();
+        System.err.println("HERE");
+        if(text == null)
         {
-            App.getRecvEmailService().reset();
-            App.getRecvEmailService().start();
+            System.err.println("if");
+            for(var part : message.getParts())
+            {
+                System.err.println(part.getContentType());
+
+                String disp = part.getDisposition();
+                System.err.println(">>>>> " + part.getContentType());
+                if(part.isMimeType("text/plain"))
+                {
+                    System.err.println("TEXT");
+                    mailContentRecvTextArea.setText((String) part.getContent());
+                    mailContentRecvTextArea.setVisible(true);
+                    mailContentRecvTextArea.setMouseTransparent(false);
+                }
+                else if(part.isMimeType("text/html"))
+                {
+                    System.err.println("HTML");
+                    mailContentRecvWebView.getEngine().loadContent((String) part.getContent());
+                    mailContentRecvTextArea.setVisible(false);
+                    mailContentRecvTextArea.setMouseTransparent(true);
+                }
+                else if(disp != null && disp.equalsIgnoreCase(Part.ATTACHMENT))
+                {
+                    System.err.println("Attachement: " + part.getFileName());
+
+                    attachedPiecesComboBox.getItems().add(new PieceView(part));
+                }
+            }
+        }
+        else
+        {
+            mailContentRecvTextArea.setText(text);
+            mailContentRecvTextArea.setVisible(true);
+            mailContentRecvTextArea.setMouseTransparent(false);
+        }
+    }
+
+    @FXML
+    public void download_piece_Action() throws IOException, MessagingException
+    {
+        PieceView pieceView = attachedPiecesComboBox.getValue();
+        if(pieceView != null)
+        {
+            FileChooser chooser = new FileChooser();
+            chooser.setInitialFileName(pieceView.getPart().getFileName());
+            var files = chooser.showSaveDialog(App.getStage());
+            if(files != null)
+            {
+                InputStream inputStream = pieceView.getPart().getInputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                int c;
+                while((c = inputStream.read()) != -1)
+                {
+                    byteArrayOutputStream.write(c);
+                }
+                byteArrayOutputStream.flush();
+
+                FileOutputStream fileOutputStream = new FileOutputStream(files.getAbsoluteFile());
+                byteArrayOutputStream.writeTo(fileOutputStream);
+                fileOutputStream.close();
+            }
+
+
         }
     }
 }

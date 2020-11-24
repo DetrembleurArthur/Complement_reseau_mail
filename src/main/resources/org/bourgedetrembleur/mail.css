@@ -35,16 +35,7 @@
     }
 }
 
-.web-view
-{
-    -fx-opacity: 0.5;
 
-}
-
-.web-view:hover
-{
-    -fx-opacity: 1;
-}
 
 .table-row-cell:selected, .table-row-cell:hover, .slider .track, .slider .thumb
 {
@@ -83,7 +74,7 @@
 , .scroll-bar:horizontal .decrement-button .decrement-arrow
 , .spinner .increment-arrow-button .increment-arrow
 , .spinner .decrement-arrow-button .decrement-arrow
-, .check-box .box
+, .check-box .box, .split-pane-divider, .split-pane .split-pane-divider .vertical-grabber, .split-pane .split-pane-divider .horizontal-grabber
 {
     -fx-background-color: rgb(138, 180, 248);
 }
@@ -115,7 +106,7 @@
 .tab-pane .tab-header-area .tab-header-background,
 .table-view
 , .scroll-pane
-, .scroll-pane .viewport, .tool-bar
+, .scroll-pane .viewport, .tool-bar, .split-pane
 {
     -fx-background-color :rgb(41, 42, 45);
 }

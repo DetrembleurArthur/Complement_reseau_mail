@@ -7,8 +7,11 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Part;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class RecvEmailService extends Service<Void>
+public class RecvEmailService extends Service<List<ViewMessage>>
 {
     private MailManager mailManager;
 
@@ -18,63 +21,31 @@ public class RecvEmailService extends Service<Void>
     }
 
     @Override
-    protected Task<Void> createTask()
+    protected Task<List<ViewMessage>> createTask()
     {
-        return new Task<Void>()
+        return new Task<List<ViewMessage>>()
         {
             @Override
-            protected Void call() throws Exception
+            protected List<ViewMessage> call() throws Exception
             {
-                var messages = mailManager.receivePop3();
-
-
-                System.err.println(messages.length);
-
-                for(int i = 0; i < messages.length; i++)
+                int nb = 0;
+                while(true)
                 {
-                    String exp = messages[i].getFrom()[0].toString();
-                    String subject = messages[i].getSubject();
-                    String date = messages[i].getSentDate().toString();
+                    var messages = mailManager.receivePop3();
+                    int nbnew = messages.length;
+                    System.err.println("SIZE/ " + nbnew + " " + nb);
 
+                    List<ViewMessage> returnMessagesList = new ArrayList<>();
 
-                    System.err.println(i + ">> " + exp + " " + subject + " " + date);
-
-                    if(messages[i].getContent() instanceof Multipart)
+                    for(int i = 0; i < nbnew - nb; i++)
                     {
-                        Multipart multipart = (Multipart) messages[i].getContent();
-                        int nbParts = multipart.getCount();
-
-                        for(int j = 0; j< nbParts; j++)
-                        {
-                            System.err.println("Composante: " + j);
-                            Part part = multipart.getBodyPart(j);
-                            String disp = part.getDisposition();
-                            if(part.isMimeType("text/plain"))
-                            {
-                                System.err.println("Plain text: " + part.getContent());
-                            }
-                            else if(part.isMimeType("text/html"))
-                            {
-                                System.err.println("Html text: " + part.getContent());
-                            }
-                            else if(disp != null && disp.equalsIgnoreCase(Part.ATTACHMENT))
-                            {
-                                System.err.println("Attachement: " + part.getFileName());
-                            }
-                        }
+                        if(!messages[nbnew-i-1].getFrom()[0].toString().equalsIgnoreCase("detart.dummy@gmail.com"))
+                            returnMessagesList.add(new ViewMessage(messages[nbnew-i-1]));
                     }
-                    else
-                    {
-                        String content = (String) messages[i].getContent();
-                        System.err.println("Content: " + content);
-                    }
-
-
-                    System.err.println(i + " / " + messages.length);
+                    nb = nbnew;
+                    updateValue(returnMessagesList);
+                    Thread.sleep(5000);
                 }
-
-
-                return null;
             }
         };
     }
