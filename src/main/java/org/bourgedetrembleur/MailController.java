@@ -103,9 +103,6 @@ public class MailController implements Initializable
     ListView<ViewMessage> inboxMailsListView;
 
     @FXML
-    TextArea mailContentRecvTextArea;
-
-    @FXML
     WebView mailContentRecvWebView;
 
     @FXML
@@ -381,8 +378,6 @@ public class MailController implements Initializable
 
     public void select_receive_message() throws MessagingException, IOException
     {
-
-        mailContentRecvTextArea.clear();
         mailContentRecvWebView.getEngine().loadContent("");
         attachedPiecesComboBox.getItems().clear();
 
@@ -407,16 +402,12 @@ public class MailController implements Initializable
                 if(part.isMimeType("text/plain"))
                 {
                     System.err.println("TEXT");
-                    mailContentRecvTextArea.setText((String) part.getContent());
-                    mailContentRecvTextArea.setVisible(true);
-                    mailContentRecvTextArea.setMouseTransparent(false);
+                    mailContentRecvWebView.getEngine().loadContent((String) part.getContent());
                 }
                 else if(part.isMimeType("text/html"))
                 {
                     System.err.println("HTML");
                     mailContentRecvWebView.getEngine().loadContent((String) part.getContent());
-                    mailContentRecvTextArea.setVisible(false);
-                    mailContentRecvTextArea.setMouseTransparent(true);
                 }
                 else if(disp != null && disp.equalsIgnoreCase(Part.ATTACHMENT))
                 {
@@ -428,9 +419,7 @@ public class MailController implements Initializable
         }
         else
         {
-            mailContentRecvTextArea.setText(text);
-            mailContentRecvTextArea.setVisible(true);
-            mailContentRecvTextArea.setMouseTransparent(false);
+            mailContentRecvWebView.getEngine().loadContent(text);
         }
     }
 
