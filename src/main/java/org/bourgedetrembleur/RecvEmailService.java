@@ -3,10 +3,7 @@ package org.bourgedetrembleur;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Part;
+import javax.mail.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,26 +23,38 @@ public class RecvEmailService extends Service<List<ViewMessage>>
         return new Task<>()
         {
             @Override
-            protected List<ViewMessage> call() throws Exception
+            protected List<ViewMessage> call() throws InterruptedException
             {
                 int nb = 0;
                 while (true)
                 {
+                    if(isCancelled())
+                        break;
                     var messages = mailManager.receivePop3();
                     int nbnew = messages.length;
                     System.err.println("SIZE/ " + nbnew + " " + nb);
 
                     List<ViewMessage> returnMessagesList = new ArrayList<>();
 
-                    for (int i = 0; i < nbnew - nb; i++)
+                    try
                     {
-                        if (!messages[nbnew - i - 1].getFrom()[0].toString().contains(mailManager.getSettings().getEmail()))
-                            returnMessagesList.add(new ViewMessage(messages[nbnew - i - 1]));
+                        for (int i = 0; i < nbnew - nb; i++)
+                        {
+
+                            if (!messages[nbnew - i - 1].getFrom()[0].toString().contains(mailManager.getSettings().getEmail()))
+                                returnMessagesList.add(new ViewMessage(messages[nbnew - i - 1]));
+                        }
+                        nb = nbnew;
+                        updateValue(returnMessagesList);
+                        Thread.sleep(5000);
                     }
-                    nb = nbnew;
-                    updateValue(returnMessagesList);
-                    Thread.sleep(5000);
+                    catch (MessagingException e)
+                    {
+                        e.printStackTrace();
+                    }
+
                 }
+                return null;
             }
         };
     }

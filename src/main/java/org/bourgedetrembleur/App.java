@@ -34,6 +34,7 @@ public class App extends Application {
     public void stop() throws Exception
     {
         super.stop();
+        recvEmailService.cancel();
         clearNotifications();
     }
 

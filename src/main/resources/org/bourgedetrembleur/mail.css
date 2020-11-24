@@ -19,10 +19,20 @@
 , .html-editor .grid
 , .html-editor .grid .top-toolbar
 , .html-editor .grid .bottom-toolbar
-, .color-picker
+, .color-picker, .list-view, .list-cell
 {
     -fx-background-color :rgb(32, 33, 36);
     -fx-border-color : rgb(32, 33, 36);
+}
+
+.list-cell .text
+{
+    -fx-fill: white ;
+}
+
+.list-cell:selected .text
+{
+    -fx-fill: rgb(138, 180, 248);
 }
 
 @keyframes opacity_animation {
