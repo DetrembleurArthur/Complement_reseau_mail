@@ -64,6 +64,8 @@
                     <mainClass>org.bourgedetrembleur.App</mainClass>
                 </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 </project>

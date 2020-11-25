@@ -23,12 +23,22 @@ public class App extends Application {
     private static final RecvEmailService recvEmailService = new RecvEmailService(mailManager);
 
     @Override
-    public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("mail"));
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
-        App.stage = stage;
+    public void start(Stage stage) throws IOException
+    {
+        try
+        {
+            scene = new Scene(loadFXML("mail"));
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            App.stage = stage;
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

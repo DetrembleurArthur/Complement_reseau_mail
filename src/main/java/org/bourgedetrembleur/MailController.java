@@ -1,15 +1,19 @@
 package org.bourgedetrembleur;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point3D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -129,11 +133,19 @@ public class MailController implements Initializable
     ComboBox<ViewMessage> choiceMailComboBox;
 
     @FXML
-    TreeView<?> mailTreeView;
+    TreeView<String> mailTreeView;
+
+    @FXML
+    Button listenPop3Button;
+
+    @FXML
+    VBox mailViewerBox;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+
+        mailContentRecvWebView.getEngine().loadContent("Empty :(");
         inboxMailsListView.getSelectionModel().selectedItemProperty().addListener((observableValue, viewMessage, t1) -> {
             try
             {
@@ -144,25 +156,35 @@ public class MailController implements Initializable
             }
         });
 
+        App.getRecvEmailService().setOnFailed(workerStateEvent -> {
+            System.err.println("clear");
+            fromRecvLabel.setText("<value>");
+            dateRecvLabel.setText("<value>");
+            subjectRecvLabel.setText("<value>");
+            mailContentRecvWebView.getEngine().loadContent("Empty :(");
+            inboxMailsListView.getItems().clear();
+            messageLabel.setText("Pop3 listening stopped");
+            App.notification("POP3 error", "Pop3 listening stopped", TrayIcon.MessageType.WARNING);
+        });
         App.getRecvEmailService().valueProperty().addListener((observableValue, viewMessages, t1) -> {
             System.err.println("Update");
-            //inboxMailsListView.getItems().clear();
-            if(t1.size() > 0)
+            if(t1 != null && t1.size() > 0)
             {
                 mailRecvTab.setText("Réception de mails (" + t1.size() + ")");
                 App.notification("Nouveaux messages", t1.size() + " nouveaux messages", TrayIcon.MessageType.INFO);
+                SoundManager.MAIL_RECV_SOUND.stop();
+                SoundManager.MAIL_RECV_SOUND.play();
                 inboxMailsListView.getItems().addAll(t1);
-                inboxMailsListView.getItems().sort(new Comparator<ViewMessage>(){
-                    public int compare(ViewMessage a, ViewMessage b)
+                inboxMailsListView.getItems().sort((a, b) -> {
+                    try
                     {
-                        try {
-                            return b.getMessage().getSentDate().compareTo(a.getMessage().getSentDate());
-                        } catch (MessagingException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        return -1;
+                        return b.getMessage().getSentDate().compareTo(a.getMessage().getSentDate());
+                    } catch (MessagingException e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
+                    return -1;
                 });
             }
         });
@@ -184,11 +206,7 @@ public class MailController implements Initializable
         App.getMailManager().getSettings().load();
 
 
-        if(!App.getRecvEmailService().isRunning())
-        {
-            App.getRecvEmailService().reset();
-            App.getRecvEmailService().start();
-        }
+        listen_pop3_Action();
 
 
         App.getSendEmailService().setOnFailed(workerStateEvent -> {
@@ -229,6 +247,8 @@ public class MailController implements Initializable
         mailSendingProgressIndicator.progressProperty().bind(App.getSendEmailService().progressProperty());
 
         choiceMailComboBox.itemsProperty().bind(inboxMailsListView.itemsProperty());
+
+        listenPop3Button.disableProperty().bind(App.getRecvEmailService().runningProperty());
 
         initSettingsControls();
         initCarnetAddrControls();
@@ -416,47 +436,45 @@ public class MailController implements Initializable
 
     public void select_receive_message() throws MessagingException, IOException
     {
-        mailContentRecvWebView.getEngine().loadContent("");
-        attachedPiecesComboBox.getItems().clear();
+
 
         var message = inboxMailsListView.getSelectionModel().getSelectedItem();
 
-
-        fromRecvLabel.setText(message.getMessage().getFrom()[0].toString());
-        subjectRecvLabel.setText(message.getMessage().getSubject());
-        dateRecvLabel.setText(message.getMessage().getSentDate().toString());
-
-        String text = message.getMessageText();
-        if(text == null)
+        if(message != null)
         {
-            for(var part : message.getParts())
+            mailContentRecvWebView.getEngine().loadContent("");
+            attachedPiecesComboBox.getItems().clear();
+
+            fromRecvLabel.setText(message.getMessage().getFrom()[0].toString());
+            subjectRecvLabel.setText(message.getMessage().getSubject());
+            dateRecvLabel.setText(message.getMessage().getSentDate().toString());
+
+            String text = message.getMessageText();
+            if(text == null)
             {
-                System.err.println(part.getContentType());
+                for(var part : message.getParts())
+                {
+                    System.err.println(part.getContentType());
 
 
-                String disp = part.getDisposition();
-                System.err.println(">>>>> " + part.getContentType());
-                if(part.isMimeType("text/plain"))
-                {
-                    System.err.println("TEXT");
-                    mailContentRecvWebView.getEngine().loadContent((String) part.getContent());
-                }
-                else if(part.isMimeType("text/html"))
-                {
-                    System.err.println("HTML");
-                    mailContentRecvWebView.getEngine().loadContent((String) part.getContent());
-                }
-                else if(disp != null && disp.equalsIgnoreCase(Part.ATTACHMENT))
-                {
-                    System.err.println("Attachement: " + part.getFileName());
+                    String disp = part.getDisposition();
+                    System.err.println(">>>>> " + part.getContentType());
+                    if(part.isMimeType("text/plain") || part.isMimeType("text/html"))
+                    {
+                        mailContentRecvWebView.getEngine().loadContent((String) part.getContent());
+                    }
+                    else if(disp != null && disp.equalsIgnoreCase(Part.ATTACHMENT))
+                    {
+                        System.err.println("Attachement: " + part.getFileName());
 
-                    attachedPiecesComboBox.getItems().add(new PieceView(part));
+                        attachedPiecesComboBox.getItems().add(new PieceView(part));
+                    }
                 }
             }
-        }
-        else
-        {
-            mailContentRecvWebView.getEngine().loadContent(text);
+            else
+            {
+                mailContentRecvWebView.getEngine().loadContent(text);
+            }
         }
     }
 
@@ -492,16 +510,79 @@ public class MailController implements Initializable
     @FXML
     public void analyse_message_Action() throws MessagingException
     {
+        TreeItem<String> root = new TreeItem<>();
+        root.setExpanded(true);
+        mailTreeView.setRoot(root);
+
         ViewMessage message = choiceMailComboBox.getSelectionModel().getSelectedItem();
         if(message != null)
         {
+            root.setValue("Mail: " + message.getMessage().getFrom()[0].toString());
+
             Enumeration<Header> headerEnum = message.getMessage().getAllHeaders();
             Header header = headerEnum.nextElement();
             while(headerEnum.hasMoreElements())
             {
-                System.err.println(header.getName() + " ::: " + header.getValue());
+                TreeItem<String> item = new TreeItem<>();
+
+                if(header.getName().toLowerCase().contains("receive"))
+                {
+                    item.setValue(header.getName().toUpperCase());
+
+
+                    Tracker tracker = new Tracker(header.getValue());
+                    TreeItem<String> from = new TreeItem<>();
+                    from.setValue("FROM -> " + tracker.getFrom());
+                    item.getChildren().add(from);
+
+                    TreeItem<String> by = new TreeItem<>();
+                    by.setValue("BY -> " + tracker.getBy());
+                    item.getChildren().add(by);
+
+                    TreeItem<String> _for = new TreeItem<>();
+                    _for.setValue("FOR -> " + tracker.getFor());
+                    item.getChildren().add(_for);
+
+                    TreeItem<String> with = new TreeItem<>();
+                    with.setValue("WITH -> " + tracker.getWith());
+                    item.getChildren().add(with);
+
+                    TreeItem<String> via = new TreeItem<>();
+                    via.setValue("VIA -> " + tracker.getVia());
+                    item.getChildren().add(via);
+
+
+                    TreeItem<String> id = new TreeItem<>();
+                    id.setValue("ID -> " + tracker.getId());
+                    item.getChildren().add(id);
+
+                    TreeItem<String> date = new TreeItem<>();
+                    date.setValue("DATE -> " + tracker.getDate());
+                    item.getChildren().add(date);
+                    root.getChildren().add(item);
+                }
+                else
+                {
+                    item.setValue(header.getName().toUpperCase());
+                    TreeItem<String> value = new TreeItem<>();
+                    value.setValue(header.getValue());
+                    item.getChildren().add(value);
+                    root.getChildren().add(item);
+                }
+
+
                 header = headerEnum.nextElement();
             }
+        }
+    }
+
+    @FXML
+    public void listen_pop3_Action()
+    {
+        if(!App.getRecvEmailService().isRunning())
+        {
+            App.getRecvEmailService().reset();
+            App.getRecvEmailService().start();
         }
     }
 }

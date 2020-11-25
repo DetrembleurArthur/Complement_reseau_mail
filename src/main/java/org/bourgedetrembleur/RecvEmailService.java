@@ -23,12 +23,12 @@ public class RecvEmailService extends Service<List<ViewMessage>>
         return new Task<>()
         {
             @Override
-            protected List<ViewMessage> call() throws InterruptedException
+            protected List<ViewMessage> call() throws Exception
             {
                 int nb = 0;
                 while (true)
                 {
-                    if(isCancelled())
+                    if (isCancelled())
                         break;
                     var messages = mailManager.receivePop3();
                     int nbnew = messages.length;
@@ -36,23 +36,15 @@ public class RecvEmailService extends Service<List<ViewMessage>>
 
                     List<ViewMessage> returnMessagesList = new ArrayList<>();
 
-                    try
+                    for (int i = 0; i < nbnew - nb; i++)
                     {
-                        for (int i = 0; i < nbnew - nb; i++)
-                        {
 
-                            if (!messages[nbnew - i - 1].getFrom()[0].toString().contains(mailManager.getSettings().getEmail()))
-                                returnMessagesList.add(new ViewMessage(messages[nbnew - i - 1]));
-                        }
-                        nb = nbnew;
-                        updateValue(returnMessagesList);
-                        Thread.sleep(5000);
+                        if (!messages[nbnew - i - 1].getFrom()[0].toString().contains(mailManager.getSettings().getEmail()))
+                            returnMessagesList.add(new ViewMessage(messages[nbnew - i - 1]));
                     }
-                    catch (MessagingException e)
-                    {
-                        e.printStackTrace();
-                    }
-
+                    nb = nbnew;
+                    updateValue(returnMessagesList);
+                    Thread.sleep(5000);
                 }
                 return null;
             }

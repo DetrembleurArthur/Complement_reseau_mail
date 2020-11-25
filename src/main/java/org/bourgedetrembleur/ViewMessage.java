@@ -6,6 +6,7 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ViewMessage
@@ -86,4 +87,6 @@ public class ViewMessage
         }
         return "error";
     }
+
+
 }

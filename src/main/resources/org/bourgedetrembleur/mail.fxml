@@ -137,23 +137,23 @@
                         <SplitPane fx:id="mailRecvSplitpane" dividerPositions="0.4" prefHeight="657.0" prefWidth="953.0" BorderPane.alignment="CENTER">
                            <items>
                               <ListView fx:id="inboxMailsListView" prefHeight="632.0" />
-                              <VBox prefHeight="654.0" prefWidth="663.0">
+                              <VBox fx:id="mailViewerBox" prefHeight="654.0" prefWidth="663.0">
                                  <children>
                                     <HBox prefHeight="24.0" prefWidth="643.0">
                                        <children>
-                                          <Label prefHeight="17.0" prefWidth="92.0" text="From: " />
+                                          <Label prefHeight="17.0" prefWidth="200.0" text="From: " />
                                           <Label fx:id="fromRecvLabel" prefHeight="17.0" prefWidth="500.0" text="&lt;value&gt;" />
                                        </children>
                                     </HBox>
                                     <HBox prefHeight="24.0" prefWidth="643.0">
                                        <children>
-                                          <Label prefHeight="17.0" prefWidth="92.0" text="Subject: " />
+                                          <Label prefHeight="17.0" prefWidth="200.0" text="Subject: " />
                                           <Label fx:id="subjectRecvLabel" prefHeight="17.0" prefWidth="500.0" text="&lt;value&gt;" />
                                        </children>
                                     </HBox>
                                     <HBox prefHeight="22.0" prefWidth="643.0">
                                        <children>
-                                          <Label prefHeight="17.0" prefWidth="92.0" text="Receive date: " />
+                                          <Label prefHeight="17.0" prefWidth="200.0" text="Receive date: " />
                                           <Label fx:id="dateRecvLabel" prefHeight="17.0" prefWidth="500.0" text="&lt;value&gt;">
                                              <HBox.margin>
                                                 <Insets bottom="5.0" />
@@ -212,7 +212,7 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox prefHeight="61.0" prefWidth="507.0" spacing="60.0">
+                        <HBox prefHeight="31.0" prefWidth="933.0" spacing="60.0">
                            <children>
                               <Label prefHeight="17.0" prefWidth="138.0" text="Choisir un mail: " />
                               <ComboBox fx:id="choiceMailComboBox" onAction="#analyse_message_Action" prefWidth="150.0" />
@@ -221,12 +221,12 @@
                               <Insets left="20.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
-                        <TreeView fx:id="mailTreeView" prefHeight="198.0" prefWidth="487.0">
+                        <TreeView fx:id="mailTreeView" prefHeight="371.0" prefWidth="913.0">
                            <VBox.margin>
                               <Insets left="20.0" right="20.0" top="10.0" />
                            </VBox.margin>
                         </TreeView>
-                        <TableView prefHeight="159.0" prefWidth="539.0">
+                        <TableView prefHeight="159.0" prefWidth="893.0">
                           <columns>
                             <TableColumn minWidth="-Infinity" prefWidth="75.0" text="Nom" />
                             <TableColumn minWidth="-Infinity" prefWidth="75.0" text="Mails reçus" />
@@ -364,6 +364,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#saveSettings_Action" text="Save" textAlignment="CENTER" />
                               <Button mnemonicParsing="false" onAction="#testSmtp_Action" text="Test smtp" textAlignment="CENTER" />
+                              <Button fx:id="listenPop3Button" mnemonicParsing="false" onAction="#listen_pop3_Action" text="Listen pop3" textFill="WHITE" />
                            </children>
                         </HBox>
                      </children>

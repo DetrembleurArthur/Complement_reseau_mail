@@ -25,12 +25,12 @@
     -fx-border-color : rgb(32, 33, 36);
 }
 
-.list-cell .text
+.list-cell .text, .tree-cell .text
 {
     -fx-fill: white ;
 }
 
-.list-cell:selected .text
+.list-cell:selected .text, .tree-cell:selected .text
 {
     -fx-fill: rgb(138, 180, 248);
 }
@@ -174,7 +174,19 @@
 }
 
 
-.list-cell:hover
+.list-cell:hover, .tree-cell:hover .text
 {
     -fx-background-color: rgb(53, 53, 53);
+}
+
+.tree-cell:hover .arrow
+{
+    -fx-background-color: blue;
+    -fx-pref-width: 10px;
+    -fx-pref-height: 10px;
+}
+
+.tree-cell .arrow
+{
+    -fx-background-color: white;
 }
