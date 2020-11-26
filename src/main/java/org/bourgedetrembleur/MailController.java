@@ -25,7 +25,9 @@ import javax.mail.Part;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
@@ -163,7 +165,7 @@ public class MailController implements Initializable
             subjectRecvLabel.setText("<value>");
             mailContentRecvWebView.getEngine().loadContent("Empty :(");
             inboxMailsListView.getItems().clear();
-            messageLabel.setText("Pop3 listening stopped");
+            guilog("Pop3 listening stopped");
             App.notification("POP3 error", "Pop3 listening stopped", TrayIcon.MessageType.WARNING);
         });
         App.getRecvEmailService().valueProperty().addListener((observableValue, viewMessages, t1) -> {
@@ -197,10 +199,7 @@ public class MailController implements Initializable
             }
         });
 
-        mailRecvTab.setOnSelectionChanged((e)->
-        {
-            mailRecvTab.setText("Réception de mails");
-        });
+        mailRecvTab.setOnSelectionChanged((e)-> mailRecvTab.setText("Réception de mails"));
 
 
         SoundManager.MAIL_SEND_SOUND.muteProperty().bind(paramEnableSoundEffectCheckBox.selectedProperty().not());
@@ -218,7 +217,7 @@ public class MailController implements Initializable
 
 
         App.getSendEmailService().setOnFailed(workerStateEvent -> {
-            messageLabel.setText("Impossible d'envoyer l'email");
+            guilog("Impossible d'envoyer l'email");
             App.notification("Mail error", workerStateEvent.getSource().getException().getMessage(), TrayIcon.MessageType.ERROR);
             FadeTransition fadeTransition = new FadeTransition();
             fadeTransition.setNode(mailSendingProgressIndicator);
@@ -228,7 +227,7 @@ public class MailController implements Initializable
             fadeTransition.playFromStart();
         });
         App.getSendEmailService().setOnSucceeded(workerStateEvent -> {
-            messageLabel.setText("Mail envoyé");
+            guilog("Mail envoyé");
             mailMessageLabel.clear();
             mailObjetLabel.clear();
             htmlMessageTextArea.setHtmlText("");
@@ -244,7 +243,7 @@ public class MailController implements Initializable
             fadeTransition.playFromStart();
         });
         App.getSendEmailService().setOnRunning(workerStateEvent -> {
-            messageLabel.setText("Envoi du mail");
+            guilog("Envoi du mail");
             FadeTransition fadeTransition = new FadeTransition();
             fadeTransition.setNode(mailSendingProgressIndicator);
             fadeTransition.setDuration(Duration.millis(1000));
@@ -319,7 +318,12 @@ public class MailController implements Initializable
         settings.setPop3Server(paramPop3ServerTextField.getText());
         settings.setPop3Port(paramPop3PortSpinner.getValue());
         settings.save();
-        messageLabel.setText("Paramètres sauvegardés");
+        guilog("Paramètres sauvegardés");
+    }
+
+    public void guilog(String msg)
+    {
+        messageLabel.setText(Date.from(Instant.now()).toString() + " :: " + msg);
     }
 
     @FXML
@@ -329,7 +333,7 @@ public class MailController implements Initializable
         String email = emailDestinataire.getText();
         if(name.isBlank() || email.isBlank())
         {
-            messageLabel.setText("Les champs doivent être remplis");
+            guilog("Les champs doivent être remplis");
         }
         else
         {
@@ -340,11 +344,11 @@ public class MailController implements Initializable
                 Receiver.save();
                 nomDestinataire.clear();
                 emailDestinataire.clear();
-                messageLabel.setText(name + " a été ajouté au carnet d'adresses");
+                guilog(name + " a été ajouté au carnet d'adresses");
             }
             else
             {
-                messageLabel.setText(name + " est déja présent dans le carnet d'adresses");
+                guilog(name + " est déja présent dans le carnet d'adresses");
             }
         }
     }
@@ -362,7 +366,7 @@ public class MailController implements Initializable
         {
             if(emailLabel.getText().isBlank() || mailObjetLabel.getText().isBlank())
             {
-                messageLabel.setText("Les champs doivent être remplis");
+                guilog("Les champs doivent être remplis");
             }
             else
             {
@@ -378,7 +382,7 @@ public class MailController implements Initializable
         }
         else
         {
-            messageLabel.setText("Attendez que le mail précédent soit envoyé");
+            guilog("Attendez que le mail précédent soit envoyé");
         }
     }
 
@@ -417,15 +421,15 @@ public class MailController implements Initializable
         switch(App.getMailManager().testSmtpAccess())
         {
             case 1:
-                messageLabel.setText("SMTP connection success");
+                guilog("SMTP connection success");
                 App.notification("SMTP connection success", App.getMailManager().getSettings().getSmtpServer(), TrayIcon.MessageType.INFO);
                 break;
             case 2:
-                messageLabel.setText("SMTP autentication failed");
+                guilog("SMTP autentication failed");
                 App.notification("SMTP autentication failed", App.getMailManager().getSettings().getEmail(), TrayIcon.MessageType.WARNING);
                 break;
             case 3:
-                messageLabel.setText("SMTP server not recognized");
+                guilog("SMTP server not recognized");
                 App.notification("SMTP server not recognized", App.getMailManager().getSettings().getSmtpServer(), TrayIcon.MessageType.ERROR);
                 break;
         }
@@ -528,14 +532,34 @@ public class MailController implements Initializable
             root.setValue("Mail: " + message.getMessage().getFrom()[0].toString());
 
             Enumeration<Header> headerEnum = message.getMessage().getAllHeaders();
+
+            int i = 0;
+            while(headerEnum.hasMoreElements()) if(headerEnum.nextElement().getName().equalsIgnoreCase("received")) i++;
+            headerEnum = message.getMessage().getAllHeaders();
             Header header = headerEnum.nextElement();
+
+            boolean first = true;
             while(headerEnum.hasMoreElements())
             {
                 TreeItem<String> item = new TreeItem<>();
 
-                if(header.getName().toLowerCase().contains("receive"))
+                if(header.getName().equalsIgnoreCase("received"))
                 {
-                    item.setValue(header.getName().toUpperCase());
+                    i--;
+                    if(first)
+                    {
+                        item.setValue("RMTA");
+                        first = false;
+                    }
+                    else if(i != 0)
+                    {
+                        item.setValue("MTA");
+                    }
+                    else
+                    {
+                        item.setValue("FMTA");
+                    }
+
 
 
                     Tracker tracker = new Tracker(header.getValue());
@@ -571,11 +595,16 @@ public class MailController implements Initializable
                 }
                 else
                 {
-                    item.setValue(header.getName().toUpperCase());
-                    TreeItem<String> value = new TreeItem<>();
-                    value.setValue(header.getValue());
-                    item.getChildren().add(value);
-                    root.getChildren().add(item);
+                    if(header.getName().equalsIgnoreCase("message-id") ||
+                            header.getName().equalsIgnoreCase("content-type"))
+                    {
+                        item.setValue(header.getName().toUpperCase());
+                        TreeItem<String> value = new TreeItem<>();
+                        value.setValue(header.getValue());
+                        item.getChildren().add(value);
+                        root.getChildren().add(item);
+                    }
+
                 }
 
 

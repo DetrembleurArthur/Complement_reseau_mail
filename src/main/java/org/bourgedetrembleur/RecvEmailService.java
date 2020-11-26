@@ -52,7 +52,8 @@ public class RecvEmailService extends Service<List<ViewMessage>>
                     }
                     nb = nbnew;
                     updateValue(returnMessagesList);
-                    Thread.sleep(5000);
+
+                    Thread.sleep(30000);
                 }
                 return null;
             }
