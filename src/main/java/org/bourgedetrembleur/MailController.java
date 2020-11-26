@@ -168,7 +168,15 @@ public class MailController implements Initializable
         });
         App.getRecvEmailService().valueProperty().addListener((observableValue, viewMessages, t1) -> {
             System.err.println("Update");
-            if(t1 != null && t1.size() > 0)
+            if(t1 == null)
+            {
+                fromRecvLabel.setText("<value>");
+                dateRecvLabel.setText("<value>");
+                subjectRecvLabel.setText("<value>");
+                mailContentRecvWebView.getEngine().loadContent("Empty :(");
+                inboxMailsListView.getItems().clear();
+            }
+            else if(t1.size() > 0)
             {
                 mailRecvTab.setText("Réception de mails (" + t1.size() + ")");
                 App.notification("Nouveaux messages", t1.size() + " nouveaux messages", TrayIcon.MessageType.INFO);

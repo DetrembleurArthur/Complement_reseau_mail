@@ -26,8 +26,16 @@ public class RecvEmailService extends Service<List<ViewMessage>>
             protected List<ViewMessage> call() throws Exception
             {
                 int nb = 0;
+                String account = mailManager.getSettings().getEmail();
                 while (true)
                 {
+                    String currentAccount = mailManager.getSettings().getEmail();
+                    if(!account.equalsIgnoreCase(currentAccount))
+                    {
+                        nb = 0;
+                        account = currentAccount;
+                        updateValue(null);
+                    }
                     if (isCancelled())
                         break;
                     var messages = mailManager.receivePop3();
