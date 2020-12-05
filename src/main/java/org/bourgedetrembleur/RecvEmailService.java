@@ -51,6 +51,7 @@ public class RecvEmailService extends Service<List<ViewMessage>>
                             returnMessagesList.add(new ViewMessage(messages[nbnew - i - 1]));
                     }
                     nb = nbnew;
+                    
                     updateValue(returnMessagesList);
 
                     Thread.sleep(30000);

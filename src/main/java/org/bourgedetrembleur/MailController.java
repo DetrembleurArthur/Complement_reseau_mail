@@ -143,6 +143,7 @@ public class MailController implements Initializable
     @FXML
     VBox mailViewerBox;
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -530,6 +531,11 @@ public class MailController implements Initializable
         if(message != null)
         {
             root.setValue("Mail: " + message.getMessage().getFrom()[0].toString());
+            TreeItem<String> tracingItem = new TreeItem<>();
+            tracingItem.setValue("Tracing");
+            TreeItem<String> otherItem = new TreeItem<>();
+            otherItem.setValue("Other");
+            root.getChildren().addAll(tracingItem, otherItem);
 
             Enumeration<Header> headerEnum = message.getMessage().getAllHeaders();
 
@@ -560,8 +566,6 @@ public class MailController implements Initializable
                         item.setValue("FMTA");
                     }
 
-
-
                     Tracker tracker = new Tracker(header.getValue());
                     TreeItem<String> from = new TreeItem<>();
                     from.setValue("FROM -> " + tracker.getFrom());
@@ -591,23 +595,17 @@ public class MailController implements Initializable
                     TreeItem<String> date = new TreeItem<>();
                     date.setValue("DATE -> " + tracker.getDate());
                     item.getChildren().add(date);
-                    root.getChildren().add(item);
+                    tracingItem.getChildren().add(item);
                 }
                 else
                 {
-                    if(header.getName().equalsIgnoreCase("message-id") ||
-                            header.getName().equalsIgnoreCase("content-type"))
-                    {
-                        item.setValue(header.getName().toUpperCase());
-                        TreeItem<String> value = new TreeItem<>();
-                        value.setValue(header.getValue());
-                        item.getChildren().add(value);
-                        root.getChildren().add(item);
-                    }
+                    item.setValue(header.getName().toUpperCase());
+                    TreeItem<String> value = new TreeItem<>();
+                    value.setValue(header.getValue());
+                    item.getChildren().add(value);
+                    otherItem.getChildren().add(item);
 
                 }
-
-
                 header = headerEnum.nextElement();
             }
         }
